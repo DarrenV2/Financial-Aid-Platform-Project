@@ -33,14 +33,14 @@ class ScholarshipController extends GetxController {
     errorMessage.value = '';
 
     try {
-      final QuerySnapshot<Map<String, dynamic>> snapshot =
-          await _db.collection('scholarships').get();
+      final QuerySnapshot snapshot = await _db.collection('scholarships').get();
 
       final List<Scholarship> scholarshipsList =
           snapshot.docs.map((doc) => Scholarship.fromFirestore(doc)).toList();
 
       scholarships.value = scholarshipsList;
     } catch (e) {
+      // Error logging should be implemented in a production environment
       errorMessage.value = 'Failed to fetch scholarships: $e';
     } finally {
       isLoading.value = false;

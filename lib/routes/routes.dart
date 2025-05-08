@@ -10,7 +10,14 @@ class TRoutes {
   // static const resetPassword = '/resetPassword';
 
   static const userDashboard = '/user-dashboard';
+
+  // Admin dashboard routes
   static const adminDashboard = '/admin-dashboard';
+  static const adminOverview = '/admin-dashboard/overview';
+  static const adminScholarships = '/admin-dashboard/scholarships';
+  static const adminManagement = '/admin-dashboard/admin-management';
+  static const adminWebScraper = '/admin-dashboard/web-scraper';
+
   static const scholarshipList = '/scholarships';
   static const scholarshipDetails = '/scholarship-details';
 }

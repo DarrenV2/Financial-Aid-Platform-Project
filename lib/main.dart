@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:financial_aid_project/data/repositories/authentication/authentication_repository.dart';
 import 'package:financial_aid_project/routes/app_routes.dart';
 import 'package:financial_aid_project/routes/routes.dart';
+import 'package:financial_aid_project/routes/route_observer.dart';
 import 'package:url_strategy/url_strategy.dart';
 import 'package:get_storage/get_storage.dart';
 import "package:financial_aid_project/utils/helpers/general_bindings.dart";
@@ -47,6 +48,9 @@ class MyApp extends StatelessWidget {
       getPages: TAppRoute.pages, //expand on this
       initialBinding: GeneralBindings(), //------------------
       initialRoute: TRoutes.home, // Ensure initial route is set to home
+      navigatorObservers: [
+        RouteObservers()
+      ], // Add RouteObserver for sidebar navigation
       unknownRoute: GetPage(
           name: '/page-not-found',
           page: () =>
