@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'scholarship_stats_controller.dart';
 
 class AdminDashboardController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -16,6 +17,9 @@ class AdminDashboardController extends GetxController {
   void onInit() {
     super.onInit();
     fetchDashboardStats();
+
+    // Initialize scholarship stats controller
+    Get.put(ScholarshipStatsController());
   }
 
   Future<void> fetchDashboardStats() async {

@@ -12,6 +12,8 @@ import 'package:url_strategy/url_strategy.dart';
 import 'package:get_storage/get_storage.dart';
 import "package:financial_aid_project/utils/helpers/general_bindings.dart";
 import 'package:financial_aid_project/utils/scripts/create_default_admin.dart';
+import 'package:financial_aid_project/utils/themes/theme.dart';
+import 'package:financial_aid_project/features/administration/controllers/theme_controller.dart';
 
 Future<void> main() async {
   // Remove # in url
@@ -40,22 +42,26 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Financial Aid Platform',
-      theme: ThemeData(primarySwatch: Colors.blue, fontFamily: "Poppins"),
-      //home: HomeScreen(),//this isnt nessasary so removed, because of initial routing below, do same for new pages
-      getPages: TAppRoute.pages, //expand on this
-      initialBinding: GeneralBindings(), //------------------
-      initialRoute: TRoutes.home, // Ensure initial route is set to home
-      navigatorObservers: [
-        RouteObservers()
-      ], // Add RouteObserver for sidebar navigation
-      unknownRoute: GetPage(
-          name: '/page-not-found',
-          page: () =>
-              const Scaffold(body: Center(child: Text('Page Not Found')))),
-      //unknown route is a placeholder justin can add an appropriate gui
-    );
+    // Initialize theme controller at app startup
+    final themeController = Get.put(ThemeController());
+
+    return Obx(() => GetMaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Financial Aid Platform',
+          themeMode: themeController.themeMode.value,
+          theme: TAppTheme.lightTheme,
+          darkTheme: TAppTheme.darkTheme,
+          getPages: TAppRoute.pages, //expand on this
+          initialBinding: GeneralBindings(), //------------------
+          initialRoute: TRoutes.home, // Ensure initial route is set to home
+          navigatorObservers: [
+            RouteObservers()
+          ], // Add RouteObserver for sidebar navigation
+          unknownRoute: GetPage(
+              name: '/page-not-found',
+              page: () =>
+                  const Scaffold(body: Center(child: Text('Page Not Found')))),
+          //unknown route is a placeholder justin can add an appropriate gui
+        ));
   }
 }

@@ -1,470 +1,562 @@
+import 'package:financial_aid_project/features/scholarship/controllers/saved_scholarship_controller.dart';
 import 'package:financial_aid_project/utils/constants/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:financial_aid_project/shared_components/responsive_builder.dart';
+import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../models/scholarship.dart';
 
-class ScholarshipDetails extends StatelessWidget {
+class ScholarshipDetails extends StatefulWidget {
   final Scholarship scholarship;
+  final bool isEmbedded;
+  final VoidCallback? onBack;
 
-  const ScholarshipDetails({super.key, required this.scholarship});
+  const ScholarshipDetails({
+    super.key,
+    required this.scholarship,
+    this.isEmbedded = false,
+    this.onBack,
+  });
+
+  @override
+  State<ScholarshipDetails> createState() => _ScholarshipDetailsState();
+}
+
+class _ScholarshipDetailsState extends State<ScholarshipDetails> {
+  late SavedScholarshipController _savedController;
+  late RxBool isSaved;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialize saved scholarship controller
+    if (!Get.isRegistered<SavedScholarshipController>()) {
+      Get.put(SavedScholarshipController());
+    }
+    _savedController = Get.find<SavedScholarshipController>();
+
+    // Check if this scholarship is saved
+    isSaved = _savedController.isScholarshipSaved(widget.scholarship.id).obs;
+  }
+
+  void _toggleSaveStatus() async {
+    final bool success =
+        await _savedController.toggleSaveStatus(widget.scholarship.id);
+
+    if (success) {
+      isSaved.value =
+          _savedController.isScholarshipSaved(widget.scholarship.id);
+      _showSaveStatusSnackbar();
+    } else if (_savedController.errorMessage.value.isNotEmpty) {
+      _showErrorSnackbar(_savedController.errorMessage.value);
+    }
+  }
+
+  void _showSaveStatusSnackbar() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(isSaved.value
+            ? 'Scholarship saved successfully!'
+            : 'Scholarship removed from saved items'),
+        backgroundColor: isSaved.value ? TColors.success : TColors.primary,
+        duration: const Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  void _showErrorSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+        duration: const Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  // Method to launch URL
+  Future<void> _launchUrl(String? urlString) async {
+    if (urlString == null || urlString.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No URL provided for this scholarship'),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
+    final Uri url = Uri.parse(urlString);
+    try {
+      if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Could not launch $urlString'),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error launching URL: $e'),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Scholarship Details'),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.share),
-            onPressed: () {
-              // Share functionality would be implemented here
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Share feature coming soon')),
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.bookmark_border),
-            onPressed: () {
-              // Save/bookmark functionality would be implemented here
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Save feature coming soon')),
-              );
-            },
-          ),
-        ],
-      ),
-      body: ResponsiveBuilder(
-        mobileBuilder: (context, constraints) {
-          return _buildMobileLayout(context);
-        },
-        tabletBuilder: (context, constraints) {
-          return _buildTabletLayout(context);
-        },
-        desktopBuilder: (context, constraints) {
-          return _buildDesktopLayout(context);
-        },
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          // Apply functionality would be implemented here
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Application feature coming soon')),
+    return widget.isEmbedded
+        ? _buildEmbeddedLayout(context)
+        : Scaffold(
+            appBar: AppBar(
+              title: const Text('Scholarship Details'),
+              backgroundColor: TColors.primary,
+              foregroundColor: Colors.white,
+              elevation: 0,
+              actions: [
+                Obx(() => IconButton(
+                      icon: Icon(
+                        isSaved.value ? Icons.bookmark : Icons.bookmark_border,
+                      ),
+                      onPressed: _toggleSaveStatus,
+                    )),
+                IconButton(
+                  icon: const Icon(Icons.share),
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('Share feature coming soon')),
+                    );
+                  },
+                ),
+              ],
+            ),
+            body: _buildDetailsContent(context),
+            floatingActionButton: FloatingActionButton.extended(
+              onPressed: () => _launchUrl(widget.scholarship.applicationLink),
+              backgroundColor: TColors.primary,
+              label: const Text('Apply Now'),
+              icon: const Icon(Icons.send),
+            ),
           );
-        },
-        backgroundColor: TColors.primary,
-        label: const Text('Apply Now'),
-        icon: const Icon(Icons.send),
-      ),
-    );
   }
 
-  Widget _buildMobileLayout(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            scholarship.title,
-            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          Row(
+  Widget _buildEmbeddedLayout(BuildContext context) {
+    return Column(
+      children: [
+        // Custom app bar for embedded view
+        Container(
+          color: TColors.primary,
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+          child: Row(
             children: [
-              const Chip(
-                label: Text('Deadline Soon',
-                    style: TextStyle(color: Colors.white)),
-                backgroundColor: Colors.green,
+              if (widget.onBack != null)
+                IconButton(
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),
+                  onPressed: widget.onBack,
+                ),
+              Expanded(
+                child: Text(
+                  'Scholarship Details',
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
               ),
-              const SizedBox(width: 8),
-              if (scholarship.meritBased)
-                const Chip(
-                  label: Text('Merit-Based',
-                      style: TextStyle(color: Colors.white)),
-                  backgroundColor: Colors.blue,
-                ),
-              if (scholarship.needBased)
-                const Chip(
-                  label:
-                      Text('Need-Based', style: TextStyle(color: Colors.white)),
-                  backgroundColor: Colors.orange,
-                ),
+              Obx(() => IconButton(
+                    icon: Icon(
+                      isSaved.value ? Icons.bookmark : Icons.bookmark_border,
+                      color: Colors.white,
+                    ),
+                    onPressed: _toggleSaveStatus,
+                  )),
+              IconButton(
+                icon: const Icon(Icons.share, color: Colors.white),
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Share feature coming soon')),
+                  );
+                },
+              ),
             ],
           ),
-          const SizedBox(height: 16),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildScholarshipDetails(context),
-                  const SizedBox(height: 24),
-                  _buildApplicationRequirements(context),
-                ],
+        ),
+
+        // Main content
+        Expanded(child: _buildDetailsContent(context)),
+      ],
+    );
+  }
+
+  Widget _buildDetailsContent(BuildContext context) {
+    final isWideScreen = MediaQuery.of(context).size.width > 900;
+
+    if (isWideScreen) {
+      return _buildWideLayout(context);
+    } else {
+      return _buildNarrowLayout(context);
+    }
+  }
+
+  Widget _buildNarrowLayout(BuildContext context) {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Title and tags
+            _buildTitleSection(),
+            const SizedBox(height: 24),
+
+            // Award card
+            _buildAwardCard(),
+            const SizedBox(height: 24),
+
+            // Description and requirements
+            _buildInfoSections(),
+            const SizedBox(height: 24),
+
+            // Source information
+            _buildSourceCard(),
+            const SizedBox(height: 32),
+
+            // Apply button
+            _buildApplyButton(context),
+
+            // Visit Website button for narrow layout
+            if (widget.scholarship.sourceWebsite.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              OutlinedButton.icon(
+                onPressed: () => _launchUrl(widget.scholarship.sourceWebsite),
+                icon: const Icon(Icons.launch),
+                label: const Text('Visit Website'),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  minimumSize: const Size(double.infinity, 50),
+                ),
               ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTabletLayout(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            flex: 2,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  scholarship.title,
-                  style: const TextStyle(
-                      fontSize: 26, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    const Chip(
-                      label: Text('Deadline Soon',
-                          style: TextStyle(color: Colors.white)),
-                      backgroundColor: Colors.green,
-                    ),
-                    const SizedBox(width: 8),
-                    if (scholarship.meritBased)
-                      const Chip(
-                        label: Text('Merit-Based',
-                            style: TextStyle(color: Colors.white)),
-                        backgroundColor: Colors.blue,
-                      ),
-                    if (scholarship.needBased)
-                      const Chip(
-                        label: Text('Need-Based',
-                            style: TextStyle(color: Colors.white)),
-                        backgroundColor: Colors.orange,
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildScholarshipDetails(context),
-                        const SizedBox(height: 24),
-                        _buildApplicationRequirements(context),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 24),
-          Expanded(
-            flex: 1,
-            child: _buildSidebar(context),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDesktopLayout(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(32.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            flex: 3,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  scholarship.title,
-                  style: const TextStyle(
-                      fontSize: 30, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    const Chip(
-                      label: Text('Deadline Soon',
-                          style: TextStyle(color: Colors.white)),
-                      backgroundColor: Colors.green,
-                    ),
-                    const SizedBox(width: 8),
-                    if (scholarship.meritBased)
-                      const Chip(
-                        label: Text('Merit-Based',
-                            style: TextStyle(color: Colors.white)),
-                        backgroundColor: Colors.blue,
-                      ),
-                    const SizedBox(width: 8),
-                    if (scholarship.needBased)
-                      const Chip(
-                        label: Text('Need-Based',
-                            style: TextStyle(color: Colors.white)),
-                        backgroundColor: Colors.orange,
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildScholarshipDetails(context),
-                        const SizedBox(height: 24),
-                        _buildApplicationRequirements(context),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 32),
-          Expanded(
-            flex: 2,
-            child: _buildSidebar(context),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildScholarshipDetails(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.blue[50],
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'About the Scholarship',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Awarded up to: ${scholarship.amount}',
-            style: const TextStyle(
-                fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blue),
-          ),
-          const SizedBox(height: 8),
-          Text('Deadline: ${scholarship.deadline}'),
-          const SizedBox(height: 12),
-          Text('Merit-Based: ${scholarship.meritBased ? "Yes" : "No"}'),
-          Text('Need-Based: ${scholarship.needBased ? "Yes" : "No"}'),
-          if (scholarship.requiredGpa != null)
-            Text('Minimum GPA: ${scholarship.requiredGpa}'),
-          const SizedBox(height: 16),
-          const Text(
-            'Description',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          Text(scholarship.description),
-          if (scholarship.eligibility != null) ...[
-            const SizedBox(height: 16),
-            const Text(
-              'Eligibility',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Text(scholarship.eligibility!),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }
 
-  Widget _buildApplicationRequirements(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.green[50],
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Application Requirements',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-          _buildRequirementItem(
-            icon: Icons.assignment,
-            title: 'Personal Statement',
-            description:
-                'A 500-word personal statement explaining why you deserve this scholarship.',
-          ),
-          const SizedBox(height: 8),
-          _buildRequirementItem(
-            icon: Icons.school,
-            title: 'Academic Transcripts',
-            description:
-                'Official or unofficial transcripts showing your academic history.',
-          ),
-          const SizedBox(height: 8),
-          _buildRequirementItem(
-            icon: Icons.person,
-            title: 'Letters of Recommendation',
-            description:
-                'Two letters of recommendation from teachers or mentors.',
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildRequirementItem({
-    required IconData icon,
-    required String title,
-    required String description,
-  }) {
+  Widget _buildWideLayout(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, color: Colors.green, size: 24),
-        const SizedBox(width: 12),
+        // Main content area
         Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              ),
-              Text(description),
-            ],
+          flex: 3,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildTitleSection(),
+                const SizedBox(height: 24),
+                _buildAwardCard(),
+                const SizedBox(height: 24),
+                _buildInfoSections(),
+              ],
+            ),
+          ),
+        ),
+
+        // Sidebar
+        Expanded(
+          flex: 1,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(0, 24, 24, 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _buildSourceCard(),
+                const SizedBox(height: 24),
+                _buildApplyButton(context),
+                if (widget.scholarship.sourceWebsite.isNotEmpty) ...[
+                  const SizedBox(height: 16),
+                  OutlinedButton.icon(
+                    onPressed: () =>
+                        _launchUrl(widget.scholarship.sourceWebsite),
+                    icon: const Icon(Icons.launch),
+                    label: const Text('Visit Website'),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                  ),
+                ],
+              ],
+            ),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildSidebar(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(8),
+  // SECTION BUILDERS
+
+  Widget _buildTitleSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Scholarship Title
+        Text(
+          widget.scholarship.title,
+          style: const TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 16),
+
+        // Tags
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            _buildTag('Deadline: ${widget.scholarship.deadline}', Colors.blue),
+            if (widget.scholarship.meritBased)
+              _buildTag('Merit-Based', Colors.green),
+            if (widget.scholarship.needBased)
+              _buildTag('Need-Based', Colors.orange),
+            if (widget.scholarship.requiredGpa != null)
+              _buildTag(
+                  'Min GPA: ${widget.scholarship.requiredGpa}', Colors.purple),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAwardCard() {
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [TColors.primary, TColors.primary.withAlpha(180)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Award Amount',
+              style: TextStyle(
+                color: Colors.white70,
+                fontSize: 16,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              widget.scholarship.amount,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
       ),
+    );
+  }
+
+  Widget _buildInfoSections() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Description
+        _buildInfoSection('Description', widget.scholarship.description),
+
+        // Eligibility
+        if (widget.scholarship.eligibility != null)
+          _buildInfoSection('Eligibility', widget.scholarship.eligibility!),
+
+        // Application Process
+        if (widget.scholarship.applicationProcess != null)
+          _buildInfoSection(
+              'Application Process', widget.scholarship.applicationProcess!),
+
+        // Required Documents
+        if (widget.scholarship.requiredDocuments != null)
+          _buildInfoSection(
+              'Required Documents', widget.scholarship.requiredDocuments!),
+      ],
+    );
+  }
+
+  Widget _buildInfoSection(String title, String content) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Scholarship Details',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-          _buildSidebarItem(
-            icon: Icons.calendar_today,
-            title: 'Application Deadline',
-            value: scholarship.deadline,
-          ),
-          const Divider(),
-          _buildSidebarItem(
-            icon: Icons.attach_money,
-            title: 'Award Amount',
-            value: scholarship.amount,
-          ),
-          const Divider(),
-          _buildSidebarItem(
-            icon: Icons.school,
-            title: 'Source',
-            value: scholarship.sourceName,
-          ),
-          const Divider(),
-          const SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {
-                // Apply action
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                      content: Text('Application feature coming soon')),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: TColors.primary,
-                padding: const EdgeInsets.symmetric(vertical: 12),
-              ),
-              child: const Text(
-                'Apply Now',
-                style: TextStyle(fontSize: 16, color: Colors.white),
+          Container(
+            margin: const EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: TColors.primary.withAlpha(25),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Text(
+              title,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: TColors.primary,
               ),
             ),
           ),
-          const SizedBox(height: 8),
-          if (scholarship.applicationLink != null)
-            SizedBox(
-              width: double.infinity,
-              child: TextButton(
-                onPressed: () {
-                  // Open application link
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                        content: Text(
-                            'Opening link: ${scholarship.applicationLink}')),
-                  );
-                },
-                child: const Text('Visit Source Website'),
-              ),
+          Text(
+            content,
+            style: const TextStyle(
+              height: 1.5,
+              fontSize: 16,
             ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildSidebarItem({
-    required IconData icon,
-    required String title,
-    required String value,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          Icon(icon, color: Colors.grey[700], size: 20),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildSourceCard() {
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               children: [
-                Text(
-                  title,
-                  style: TextStyle(color: Colors.grey[700], fontSize: 14),
+                CircleAvatar(
+                  backgroundColor: TColors.primary.withAlpha(25),
+                  child: Icon(Icons.school, color: TColors.primary),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  value,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Source',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                        ),
+                      ),
+                      Text(
+                        widget.scholarship.sourceName,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (widget.scholarship.sourceWebsite.isNotEmpty)
+                  IconButton(
+                    icon: Icon(Icons.open_in_new, color: TColors.primary),
+                    onPressed: () =>
+                        _launchUrl(widget.scholarship.sourceWebsite),
+                    tooltip: 'Visit source website',
+                  ),
+              ],
+            ),
+            const Divider(height: 24),
+            Row(
+              children: [
+                CircleAvatar(
+                  backgroundColor: TColors.primary.withAlpha(25),
+                  child: Icon(Icons.calendar_today, color: TColors.primary),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Deadline',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                        ),
+                      ),
+                      Text(
+                        widget.scholarship.deadline,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
-          ),
-        ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildApplyButton(BuildContext context) {
+    return ElevatedButton.icon(
+      onPressed: () => _launchUrl(widget.scholarship.applicationLink),
+      icon: const Icon(Icons.send),
+      label: const Text('Apply Now'),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: TColors.primary,
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        textStyle: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTag(String text, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withAlpha(25),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: color),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          color: color,
+          fontWeight: FontWeight.bold,
+          fontSize: 14,
+        ),
       ),
     );
   }

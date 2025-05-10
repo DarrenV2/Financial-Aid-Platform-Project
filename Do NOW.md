@@ -1,82 +1,52 @@
-Search files...
 
-Ran tool
+## Student Dashboard Restructuring Plan
 
-Ran tool
-
-Read file: lib/features/authentication/views/admin_dashboard_screen.dart
-
-Ran tool
-
-Let me create a plan to restructure the admin dashboard for better modularity. Based on your files and structure, here's how we can improve it:
-
-## 1. Folder Structure
-
-Create a dedicated folder for the admin dashboard components:
+### 1. Folder Structure
 
 ```
 lib/
   ├── features/
-  │   ├── administration/  (new folder)
+  │   ├── student/ (new folder)
   │   │   ├── controllers/
-  │   │   │   ├── sidebar_controller.dart
-  │   │   │   └── admin_dashboard_controller.dart
+  │   │   │   └── user_dashboard_controller.dart
   │   │   ├── views/
-  │   │   │   ├── admin_dashboard_screen.dart (main container)
+  │   │   │   ├── user_dashboard_screen.dart (main container)
   │   │   │   └── tabs/
-  │   │   │       ├── overview_tab.dart
-  │   │   │       ├── scholarship_management_tab.dart
-  │   │   │       ├── admin_management_tab.dart
-  │   │   │       └── web_scraper_tab.dart
+  │   │   │       ├── scholarships_tab.dart
+  │   │   │       ├── applications_tab.dart
+  │   │   │       ├── profile_tab.dart
+  │   │   │       └── notifications_tab.dart
   │   │   └── models/
-  │   │       └── sidebar_item.dart
-  │   ├── authentication/
-  │   └── scholarship/
+  │   │       └── dashboard_item.dart
 ```
 
-## 2. Implementation Strategy
+### 2. Implementation Strategy
 
-### Step 1: Create a SidebarController
+#### Step 1: Create a DashboardController
 
 ```dart
-// lib/features/administration/controllers/sidebar_controller.dart
+// lib/features/student/controllers/user_dashboard_controller.dart
 import 'package:get/get.dart';
 
-class SidebarController extends GetxController {
-  final RxString activeItem = 'overview'.obs;
+class UserDashboardController extends GetxController {
+  final RxString activeTab = 'scholarships'.obs;
 
-  void setActiveItem(String item) {
-    activeItem.value = item;
+  void setActiveTab(String tab) {
+    activeTab.value = tab;
   }
 }
 ```
 
-### Step 2: Update Routes to Support Admin Dashboard Navigation
+#### Step 2: Create Tab Components
 
 ```dart
-// lib/routes/routes.dart - Add nested routes
-class TRoutes {
-  // Existing routes...
-
-  // Admin dashboard routes
-  static const adminDashboard = '/admin-dashboard';
-  static const adminOverview = '/admin-dashboard/overview';
-  static const adminScholarships = '/admin-dashboard/scholarships';
-  static const adminManagement = '/admin-dashboard/admin-management';
-  static const adminWebScraper = '/admin-dashboard/web-scraper';
-}
-```
-
-### Step 3: Create Tab Components
-
-Each tab should be moved to its own file, for example:
-
-```dart
-// lib/features/administration/views/tabs/overview_tab.dart
+// lib/features/student/views/tabs/scholarships_tab.dart
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:financial_aid_project/routes/routes.dart';
 
-class OverviewTab extends StatelessWidget {
-  const OverviewTab({Key? key}) : super(key: key);
+class ScholarshipsTab extends StatelessWidget {
+  const ScholarshipsTab({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +56,16 @@ class OverviewTab extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Content from AdminDashboardOverview
+            const Text(
+              'Available Scholarships',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            // Scholarship list content here
+            ElevatedButton(
+              onPressed: () => Get.toNamed(TRoutes.scholarshipList),
+              child: const Text('Browse All Scholarships'),
+            ),
           ],
         ),
       ),
@@ -95,80 +74,129 @@ class OverviewTab extends StatelessWidget {
 }
 ```
 
-### Step 4: Update the Main Dashboard Screen
+#### Step 3: Update Routes
 
 ```dart
-// lib/features/administration/views/admin_dashboard_screen.dart
+// lib/routes/routes.dart - Add new routes
+class TRoutes {
+  // Existing routes...
+
+  // User dashboard routes
+  static const userDashboard = '/user-dashboard';
+  static const userScholarships = '/user-dashboard/scholarships';
+  static const userApplications = '/user-dashboard/applications';
+  static const userProfile = '/user-dashboard/profile';
+  static const userNotifications = '/user-dashboard/notifications';
+}
+```
+
+#### Step 4: Update Main Dashboard Screen
+
+```dart
+// lib/features/student/views/user_dashboard_screen.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../controllers/sidebar_controller.dart';
-import 'tabs/overview_tab.dart';
-import 'tabs/scholarship_management_tab.dart';
-import 'tabs/admin_management_tab.dart';
-import 'tabs/web_scraper_tab.dart';
+import '../controllers/user_dashboard_controller.dart';
+import 'tabs/scholarships_tab.dart';
+import 'tabs/applications_tab.dart';
+import 'tabs/profile_tab.dart';
+import 'tabs/notifications_tab.dart';
+import 'package:financial_aid_project/data/repositories/authentication/authentication_repository.dart';
 
-class AdminDashboardScreen extends StatelessWidget {
-  const AdminDashboardScreen({Key? key}) : super(key: key);
+class UserDashboardScreen extends StatelessWidget {
+  const UserDashboardScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final sidebarController = Get.put(SidebarController());
+    final dashboardController = Get.put(UserDashboardController());
 
     return Scaffold(
-      body: Row(
-        children: [
-          _buildSidebar(sidebarController),
-          _buildContent(sidebarController),
+      appBar: AppBar(
+        title: const Text('User Dashboard'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () => AuthenticationRepository.instance.logout(),
+          ),
         ],
       ),
-    );
-  }
-
-  Widget _buildContent(SidebarController controller) {
-    return Expanded(
-      child: Obx(() {
-        switch (controller.activeItem.value) {
-          case 'overview':
-            return const OverviewTab();
+      body: Obx(() {
+        // Return the active tab
+        switch (dashboardController.activeTab.value) {
           case 'scholarships':
-            return const ScholarshipManagementTab();
-          case 'admin-management':
-            return const AdminManagementTab();
-          case 'web-scraper':
-            return const WebScraperTab();
+            return const ScholarshipsTab();
+          case 'applications':
+            return const ApplicationsTab();
+          case 'profile':
+            return const ProfileTab();
+          case 'notifications':
+            return const NotificationsTab();
           default:
-            return const OverviewTab();
+            return const ScholarshipsTab();
         }
+      }),
+      bottomNavigationBar: Obx(() {
+        return BottomNavigationBar(
+          currentIndex: _getNavIndex(dashboardController.activeTab.value),
+          onTap: (index) => _updateActiveTab(dashboardController, index),
+          type: BottomNavigationBarType.fixed,
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.school),
+              label: 'Scholarships',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.description),
+              label: 'Applications',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person),
+              label: 'Profile',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.notifications),
+              label: 'Notifications',
+            ),
+          ],
+        );
       }),
     );
   }
 
-  Widget _buildSidebar(SidebarController controller) {
-    // Sidebar implementation
+  int _getNavIndex(String activeTab) {
+    switch (activeTab) {
+      case 'scholarships': return 0;
+      case 'applications': return 1;
+      case 'profile': return 2;
+      case 'notifications': return 3;
+      default: return 0;
+    }
+  }
+
+  void _updateActiveTab(UserDashboardController controller, int index) {
+    switch (index) {
+      case 0: controller.setActiveTab('scholarships'); break;
+      case 1: controller.setActiveTab('applications'); break;
+      case 2: controller.setActiveTab('profile'); break;
+      case 3: controller.setActiveTab('notifications'); break;
+    }
   }
 }
 ```
 
-### Step 5: Route Observer and Navigation
+### 3. Benefits
 
-Enable GetX to observe and respond to route changes by updating the route observer and adding it to your application setup.
+1. **Modularity**: Each section is in its own file
+2. **Maintainability**: Easier to modify individual sections
+3. **Better UX**: Tab-based navigation instead of grid cards
+4. **State Management**: Proper GetX architecture for state management
+5. **Scalability**: Easy to add more tabs or features
 
-## 3. Benefits of This Approach:
+### 4. Implementation Steps
 
-1. **Modularity**: Each tab is in its own file, making it easier to maintain
-2. **Scalability**: New tabs can be added without modifying existing code
-3. **Navigation**: GetX routing allows for deep linking and better state management
-4. **Organization**: Clear folder structure makes it obvious where admin-related code lives
-5. **Maintainability**: Smaller, focused files are easier to understand and modify
-
-## 4. Implementation Steps:
-
-1. Create the new folder structure
-2. Create the sidebar controller
-3. Split each tab into its own file
-4. Update the main admin dashboard to use GetX for navigation
-5. Update the routes to support the new structure
-6. Implement the route observer to track navigation
-7. Update the app initialization to use the route observer
-
-Would you like me to help you implement this restructuring? I can start by creating any specific component you want to focus on first.
+1. Create the folder structure
+2. Implement the controller
+3. Create separate tab components
+4. Update routes
+5. Implement the main dashboard screen with bottom navigation
+6. Wire everything together with GetX

@@ -9,6 +9,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:financial_aid_project/features/administration/controllers/sidebar_controller.dart';
+import 'package:financial_aid_project/features/student/controllers/user_dashboard_controller.dart';
 import 'routes.dart';
 
 class RouteObservers extends GetObserver {
@@ -26,6 +27,22 @@ class RouteObservers extends GetObserver {
     TRoutes.adminScholarships: 'scholarships',
     TRoutes.adminManagement: 'admin-management',
     TRoutes.adminWebScraper: 'web-scraper',
+  };
+
+  // List of user dashboard routes to listen for
+  final List<String> userRoutes = [
+    TRoutes.userScholarships,
+    TRoutes.userApplications,
+    TRoutes.userProfile,
+    TRoutes.userNotifications,
+  ];
+
+  // Map routes to user tab IDs
+  final Map<String, String> routeToUserTabId = {
+    TRoutes.userScholarships: 'scholarships',
+    TRoutes.userApplications: 'applications',
+    TRoutes.userProfile: 'profile',
+    TRoutes.userNotifications: 'notifications',
   };
 
   /// Called when a route is popped from the navigation stack.
@@ -59,7 +76,7 @@ class RouteObservers extends GetObserver {
     super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
   }
 
-  /// Helper method to update the active item in the sidebar based on the current route
+  /// Helper method to update the active item in the sidebar or user tabs based on the current route
   void _updateActiveItemFromRoute(Route<dynamic>? route) {
     if (route != null && route.settings.name != null) {
       final routeName = route.settings.name!;
@@ -71,13 +88,31 @@ class RouteObservers extends GetObserver {
             final sidebarController = Get.find<SidebarController>();
             final sidebarId = routeToSidebarId[adminRoute];
             if (sidebarId != null) {
-              // Update the sidebar directly - simpler approach
+              // Update the sidebar directly
               sidebarController.setActiveItem(sidebarId);
               break;
             }
           } catch (e) {
             // SidebarController may not be initialized yet
-            print('Error finding SidebarController: $e');
+            debugPrint('Error finding SidebarController: $e');
+          }
+        }
+      }
+
+      // Check if this is one of our user dashboard routes
+      for (final userRoute in userRoutes) {
+        if (routeName == userRoute || routeName.startsWith('$userRoute/')) {
+          try {
+            final userDashboardController = Get.find<UserDashboardController>();
+            final tabId = routeToUserTabId[userRoute];
+            if (tabId != null) {
+              // Update the user dashboard tabs
+              userDashboardController.setActiveTab(tabId);
+              break;
+            }
+          } catch (e) {
+            // UserDashboardController may not be initialized yet
+            debugPrint('Error finding UserDashboardController: $e');
           }
         }
       }

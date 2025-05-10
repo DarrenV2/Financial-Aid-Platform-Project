@@ -9,7 +9,12 @@ class TRoutes {
   // Not currently used - Firebase handles the reset UI externally
   // static const resetPassword = '/resetPassword';
 
+  // User dashboard routes
   static const userDashboard = '/user-dashboard';
+  static const userScholarships = '/user-dashboard/scholarships';
+  static const userApplications = '/user-dashboard/applications';
+  static const userProfile = '/user-dashboard/profile';
+  static const userNotifications = '/user-dashboard/notifications';
 
   // Admin dashboard routes
   static const adminDashboard = '/admin-dashboard';
@@ -20,4 +25,5 @@ class TRoutes {
 
   static const scholarshipList = '/scholarships';
   static const scholarshipDetails = '/scholarship-details';
+  static const savedScholarships = '/saved-scholarships';
 }

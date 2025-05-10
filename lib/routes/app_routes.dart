@@ -1,14 +1,11 @@
 import 'package:financial_aid_project/features/administration/views/admin_dashboard_screen.dart';
-import 'package:financial_aid_project/features/administration/views/tabs/overview_tab.dart';
-import 'package:financial_aid_project/features/administration/views/tabs/scholarship_management_tab.dart';
-import 'package:financial_aid_project/features/administration/views/tabs/admin_management_tab.dart';
-import 'package:financial_aid_project/features/administration/views/tabs/web_scraper_tab.dart';
-import 'package:financial_aid_project/features/authentication/views/dashboard_screen.dart';
+import 'package:financial_aid_project/features/student/views/user_dashboard_screen.dart';
 import 'package:financial_aid_project/features/authentication/views/forget_password_screen.dart';
 import 'package:financial_aid_project/features/authentication/views/home_screen.dart';
 import 'package:financial_aid_project/features/authentication/views/login_screen.dart';
 import 'package:financial_aid_project/features/authentication/views/signup.screen.dart';
 import 'package:financial_aid_project/features/scholarship/views/scholarship_list.dart';
+import 'package:financial_aid_project/features/scholarship/views/saved_scholarships_screen.dart';
 import 'package:financial_aid_project/routes/routes_middleware.dart';
 import 'package:financial_aid_project/routes/routes.dart';
 import 'package:get/get.dart';
@@ -33,6 +30,27 @@ class TAppRoute {
         middlewares: [TRouteMiddleware()]),
     GetPage(
         name: TRoutes.userDashboard,
+        page: () => const UserDashboardScreen(),
+        middlewares: [TRouteMiddleware()]),
+
+    // User dashboard tab routes as separate pages
+    GetPage(
+        name: TRoutes.userScholarships,
+        page: () => const UserDashboardScreen(),
+        middlewares: [TRouteMiddleware()]),
+
+    GetPage(
+        name: TRoutes.userApplications,
+        page: () => const UserDashboardScreen(),
+        middlewares: [TRouteMiddleware()]),
+
+    GetPage(
+        name: TRoutes.userProfile,
+        page: () => const UserDashboardScreen(),
+        middlewares: [TRouteMiddleware()]),
+
+    GetPage(
+        name: TRoutes.userNotifications,
         page: () => const UserDashboardScreen(),
         middlewares: [TRouteMiddleware()]),
 
@@ -66,6 +84,11 @@ class TAppRoute {
     GetPage(
         name: TRoutes.scholarshipList,
         page: () => const ScholarshipList(),
+        middlewares: [TRouteMiddleware()]),
+
+    GetPage(
+        name: TRoutes.savedScholarships,
+        page: () => const SavedScholarshipsScreen(),
         middlewares: [TRouteMiddleware()]),
     // Note: ScholarshipDetails requires a scholarship parameter, so it can't be
     // directly added as a route. It will be navigated to from ScholarshipList

@@ -80,10 +80,72 @@ class ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
           onPressed: () => Get.back(),
         ),
       ),
-      body: Center(
-        child: SingleChildScrollView(
-          child: Container(
-            constraints: const BoxConstraints(maxWidth: 500),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          if (constraints.maxWidth >= 768) {
+            return _buildWideLayout(context);
+          } else {
+            return _buildMobileLayout(context);
+          }
+        },
+      ),
+    );
+  }
+
+  Widget _buildMobileLayout(BuildContext context) {
+    return Center(
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Text(
+                "FORGOT PASSWORD",
+                style: TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                  color: TColors.primary,
+                  fontFamily: 'Poppins',
+                ),
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                "Don't worry, we'll help you recover your password",
+                style: TextStyle(
+                  fontSize: 16,
+                  color: TColors.textLightGray,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 30),
+              _buildForgetPasswordForm(),
+              const SizedBox(height: 16),
+              _buildSendButton(),
+              const SizedBox(height: 20),
+              TextButton(
+                onPressed: () => Get.toNamed(TRoutes.login),
+                style: TextButton.styleFrom(
+                  foregroundColor: TColors.primary,
+                ),
+                child: const Text(
+                  "Remember your password? Login",
+                  style: TextStyle(fontWeight: FontWeight.w500),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWideLayout(BuildContext context) {
+    return Center(
+      child: SingleChildScrollView(
+        child: FractionallySizedBox(
+          widthFactor: 0.6, // Set the width to 60% of the available space
+          child: Padding(
             padding: const EdgeInsets.all(24.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -91,7 +153,7 @@ class ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                 const Text(
                   "FORGOT PASSWORD",
                   style: TextStyle(
-                    fontSize: 30,
+                    fontSize: 36,
                     fontWeight: FontWeight.bold,
                     color: TColors.primary,
                     fontFamily: 'Poppins',

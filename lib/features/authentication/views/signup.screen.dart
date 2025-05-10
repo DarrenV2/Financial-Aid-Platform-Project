@@ -22,19 +22,161 @@ class SignupScreenState extends State<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
-      body: Center(
-        child: SingleChildScrollView(
-          child: Container(
-            constraints: const BoxConstraints(maxWidth: 500),
-            padding: const EdgeInsets.all(24.0),
+      backgroundColor: Colors.grey[100],
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          if (constraints.maxWidth >= 1024) {
+            return _buildDesktopLayout(context);
+          } else if (constraints.maxWidth >= 768) {
+            return _buildTabletLayout(context);
+          } else {
+            return _buildMobileLayout(context);
+          }
+        },
+      ),
+    );
+  }
+
+  // Mobile Layout
+  Widget _buildMobileLayout(BuildContext context) {
+    return Center(
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Text(
+                "SIGN UP",
+                style: TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                  color: TColors.primary,
+                  fontFamily: 'Poppins',
+                ),
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                "Create your new account",
+                style: TextStyle(
+                  fontSize: 16,
+                  color: TColors.textLightGray,
+                ),
+              ),
+              const SizedBox(height: 24),
+              _buildSignupForm(),
+              const SizedBox(height: 16),
+              _buildSignupButton(),
+              const SizedBox(height: 12),
+              const Row(
+                children: [
+                  Expanded(child: Divider()),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    child: Text("or"),
+                  ),
+                  Expanded(child: Divider()),
+                ],
+              ),
+              const SizedBox(height: 15),
+              _buildSocialLoginButtons(),
+              const SizedBox(height: 20),
+              TextButton(
+                onPressed: () => Get.toNamed(TRoutes.login),
+                style: TextButton.styleFrom(
+                  foregroundColor: TColors.primary,
+                ),
+                child: const Text(
+                  "Already have an account? Login",
+                  style: TextStyle(fontWeight: FontWeight.w500),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Tablet Layout
+  Widget _buildTabletLayout(BuildContext context) {
+    return Center(
+      child: SingleChildScrollView(
+        child: FractionallySizedBox(
+          widthFactor: 0.7, // Set the width to 70% of the available space
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Text(
                   "SIGN UP",
                   style: TextStyle(
-                    fontSize: 30,
+                    fontSize: 36,
+                    fontWeight: FontWeight.bold,
+                    color: TColors.primary,
+                    fontFamily: 'Poppins',
+                  ),
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  "Create your new account",
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: TColors.textLightGray,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                _buildSignupForm(),
+                const SizedBox(height: 16),
+                _buildSignupButton(),
+                const SizedBox(height: 12),
+                const Row(
+                  children: [
+                    Expanded(child: Divider()),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      child: Text("or"),
+                    ),
+                    Expanded(child: Divider()),
+                  ],
+                ),
+                const SizedBox(height: 15),
+                _buildSocialLoginButtons(),
+                const SizedBox(height: 20),
+                TextButton(
+                  onPressed: () => Get.toNamed(TRoutes.login),
+                  style: TextButton.styleFrom(
+                    foregroundColor: TColors.primary,
+                  ),
+                  child: const Text(
+                    "Already have an account? Login",
+                    style: TextStyle(fontWeight: FontWeight.w500),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Desktop Layout
+  Widget _buildDesktopLayout(BuildContext context) {
+    return Center(
+      child: SingleChildScrollView(
+        child: FractionallySizedBox(
+          widthFactor: 0.5, // Set the width to 50% of the available space
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Text(
+                  "SIGN UP",
+                  style: TextStyle(
+                    fontSize: 40,
                     fontWeight: FontWeight.bold,
                     color: TColors.primary,
                     fontFamily: 'Poppins',

@@ -46,4 +46,19 @@ class UserRepository extends GetxController {
       throw 'Something went wrong. Please try again';
     }
   }
+
+  /// Function to update user data in Firestore.
+  Future<void> updateUserData(UserModel user) async {
+    try {
+      await _db.collection('Users').doc(user.id).update(user.toJson());
+    } on FirebaseAuthException catch (e) {
+      throw TFirebaseAuthException(e.code).message;
+    } on FormatException catch (_) {
+      throw const TFormatException();
+    } on PlatformException catch (e) {
+      throw TPlatformException(e.code).message;
+    } catch (e) {
+      throw 'Failed to update user data: ${e.toString()}';
+    }
+  }
 }

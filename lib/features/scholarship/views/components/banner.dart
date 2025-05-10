@@ -2,49 +2,100 @@ import 'package:flutter/material.dart';
 import 'package:financial_aid_project/utils/constants/colors.dart';
 
 class BannerWidget extends StatelessWidget {
-  final VoidCallback onClick;
+  final VoidCallback? onClick;
 
-  const BannerWidget({super.key, required this.onClick});
+  const BannerWidget({super.key, this.onClick});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: 100, // Adjust height as needed
-      margin: const EdgeInsets.symmetric(
-          vertical: 16), // Add spacing around the banner
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       decoration: BoxDecoration(
-        image: const DecorationImage(
-          image: AssetImage(
-            'assets/images/bannerbg.png', // Path to your image
+        gradient: LinearGradient(
+          colors: [
+            TColors.primary,
+            TColors.primary.withAlpha(180),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: TColors.primary.withAlpha(77),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
           ),
-          fit: BoxFit.cover, // Adjust fit as needed
-        ), // Optional: Add rounded corners
+        ],
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Stack(
         children: [
-          const Text(
-            "Complete user profile sign up for a personalised Experience",
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.white, // Ensure text is visible on the image
-            ),
-          ),
-          ElevatedButton(
-            onPressed: onClick,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: TColors.primary,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
+          // Background pattern (optional)
+          Positioned(
+            right: -20,
+            bottom: -20,
+            child: Opacity(
+              opacity: 0.1,
+              child: Icon(
+                Icons.school,
+                size: 120,
+                color: Colors.white,
               ),
             ),
-            child: const Text("CLICK HERE",
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
+          ),
+
+          // Content
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        "Complete your profile",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        "Get personalized scholarship recommendations based on your academic profile and interests",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white.withAlpha(230),
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 16),
+                ElevatedButton.icon(
+                  onPressed: onClick,
+                  icon: const Icon(Icons.person),
+                  label: const Text("Update Profile"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: TColors.primary,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),

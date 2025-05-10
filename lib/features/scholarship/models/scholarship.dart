@@ -227,6 +227,7 @@ class Scholarship {
     double? requiredGpa,
     List<String>? categories,
     DateTime? scrapedDate,
+    DateTime? lastUpdated,
   }) {
     return Scholarship(
       id: id ?? this.id,
@@ -245,6 +246,7 @@ class Scholarship {
       requiredGpa: requiredGpa ?? this.requiredGpa,
       categories: categories ?? this.categories,
       scrapedDate: scrapedDate ?? this.scrapedDate,
+      lastUpdated: lastUpdated ?? this.lastUpdated,
     );
   }
 }
