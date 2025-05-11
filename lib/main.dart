@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 //removed due to implemeting rounting
@@ -22,7 +23,14 @@ Future<void> main() async {
   // Initialize GetStorage
   await GetStorage.init();
 
+  // Ensure Flutter binding is initialized
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Configure channel buffers to prevent lifecycle messages being discarded
+  const MethodChannel('plugins.flutter.io/shared_preferences')
+      .setMethodCallHandler(null);
+  ServicesBinding.instance.defaultBinaryMessenger
+      .setMessageHandler('flutter/lifecycle', (ByteData? data) async => null);
 
   // Initialize Firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform)

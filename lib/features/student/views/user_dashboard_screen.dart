@@ -5,7 +5,7 @@ import '../controllers/profile_controller.dart';
 import 'tabs/scholarships_tab.dart';
 import 'tabs/applications_tab.dart';
 import 'tabs/profile_tab.dart';
-import 'tabs/notifications_tab.dart';
+import 'tabs/coaching_tab.dart';
 import 'package:financial_aid_project/routes/routes.dart';
 import 'package:financial_aid_project/utils/constants/colors.dart';
 
@@ -45,7 +45,7 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
       TRoutes.userScholarships: 'scholarships',
       TRoutes.userApplications: 'applications',
       TRoutes.userProfile: 'profile',
-      TRoutes.userNotifications: 'notifications',
+      TRoutes.userCoaching: 'coaching',
     };
 
     // Find matching tab ID for current route
@@ -76,8 +76,8 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
             return const ApplicationsTab();
           case 'profile':
             return const ProfileTab();
-          case 'notifications':
-            return const NotificationsTab();
+          case 'coaching':
+            return const CoachingTab();
           default:
             return const ScholarshipsTab();
         }
@@ -86,7 +86,7 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
+              color: Colors.grey.withAlpha(51),
               blurRadius: 10,
               spreadRadius: 2,
             ),
@@ -111,12 +111,12 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
                 label: 'Applications',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.person),
-                label: 'Profile',
+                icon: Icon(Icons.psychology),
+                label: 'Coaching',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.notifications),
-                label: 'Notifications',
+                icon: Icon(Icons.person),
+                label: 'Profile',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.logout),
@@ -135,9 +135,9 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
         return 0;
       case 'applications':
         return 1;
-      case 'profile':
+      case 'coaching':
         return 2;
-      case 'notifications':
+      case 'profile':
         return 3;
       default:
         return 0;
@@ -164,12 +164,12 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
         route = TRoutes.userApplications;
         break;
       case 2:
-        tabId = 'profile';
-        route = TRoutes.userProfile;
+        tabId = 'coaching';
+        route = TRoutes.userCoaching;
         break;
       case 3:
-        tabId = 'notifications';
-        route = TRoutes.userNotifications;
+        tabId = 'profile';
+        route = TRoutes.userProfile;
         break;
       default:
         tabId = 'scholarships';
@@ -211,9 +211,6 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: TColors.primary,
                 foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
               ),
               child: const Text('Logout'),
             ),

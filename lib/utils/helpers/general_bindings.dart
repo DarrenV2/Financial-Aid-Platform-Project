@@ -5,6 +5,8 @@ import 'package:financial_aid_project/features/authentication/controllers/login_
 import 'package:financial_aid_project/features/authentication/controllers/signup_controller.dart';
 import 'package:financial_aid_project/features/authentication/controllers/admin_controller.dart';
 import 'package:financial_aid_project/data/repositories/admin/admin_repository.dart';
+import 'package:financial_aid_project/features/coaching/controllers/coaching_controller.dart';
+import 'package:financial_aid_project/features/coaching/controllers/learning_controller.dart';
 
 class GeneralBindings extends Bindings {
   @override
@@ -16,5 +18,9 @@ class GeneralBindings extends Bindings {
     Get.lazyPut(() => SignupController(), fenix: true);
     Get.put(AdminRepository());
     Get.lazyPut(() => AdminController(), fenix: true);
+
+    /// -- Feature Controllers
+    Get.lazyPut(() => CoachingController(), fenix: true);
+    Get.lazyPut(() => LearningController(), fenix: true);
   }
 }

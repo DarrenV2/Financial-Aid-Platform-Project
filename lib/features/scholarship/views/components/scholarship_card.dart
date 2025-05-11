@@ -1,6 +1,15 @@
 import 'package:financial_aid_project/utils/constants/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:financial_aid_project/features/scholarship/models/scholarship.dart';
+import 'package:intl/intl.dart';
+
+// Define deadline status enum at top level
+enum DeadlineStatus {
+  soon, // Deadline within 14 days
+  open, // Deadline in the future or no deadline (always open)
+  closed, // Deadline has passed
+  unknown // Could not parse deadline
+}
 
 class ScholarshipCard extends StatelessWidget {
   final Scholarship scholarship;
@@ -20,10 +29,9 @@ class ScholarshipCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Determine if deadline is soon based on the deadline string
-    // This is a simple implementation - in production you would parse the date
-    final bool isDeadlineSoon = scholarship.deadline.contains('soon') ||
-        scholarship.deadline.contains('Soon');
+    // Determine deadline status based on actual date comparison
+    final DeadlineStatus deadlineStatus =
+        _getDeadlineStatus(scholarship.deadline);
 
     return Card(
       elevation: 4,
@@ -38,9 +46,7 @@ class ScholarshipCard extends StatelessWidget {
             Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: isDeadlineSoon
-                      ? [Colors.green, Colors.green.shade400]
-                      : [TColors.primary, TColors.primary.withAlpha(180)],
+                  colors: _getHeaderColors(deadlineStatus),
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -61,7 +67,7 @@ class ScholarshipCard extends StatelessWidget {
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
-                              isDeadlineSoon ? 'Deadline Soon' : 'Open',
+                              _getDeadlineText(deadlineStatus),
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
@@ -149,7 +155,9 @@ class ScholarshipCard extends StatelessWidget {
                         const SizedBox(width: 4),
                         Expanded(
                           child: Text(
-                            'Deadline: ${scholarship.deadline}',
+                            scholarship.deadline.isEmpty
+                                ? 'Deadline: No Deadline'
+                                : 'Deadline: ${scholarship.deadline}',
                             style: TextStyle(
                               color: Colors.grey[600],
                               fontSize: 13,
@@ -218,5 +226,102 @@ class ScholarshipCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  // Get deadline status by comparing dates
+  DeadlineStatus _getDeadlineStatus(String deadlineStr) {
+    // Check if deadline is empty or null (no deadline/always open)
+    if (deadlineStr.isEmpty) {
+      return DeadlineStatus.open;
+    }
+
+    // Try to parse the deadline string into a DateTime
+    DateTime? deadlineDate = _tryParseDate(deadlineStr);
+
+    // If we couldn't parse a date
+    if (deadlineDate == null) {
+      return DeadlineStatus.unknown;
+    }
+
+    // Get current date (without time component)
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    // Compare dates
+    if (deadlineDate.isBefore(today)) {
+      return DeadlineStatus.closed;
+    }
+
+    // Calculate days until deadline
+    final daysUntilDeadline = deadlineDate.difference(today).inDays;
+
+    // If deadline is within 14 days, consider it "soon"
+    if (daysUntilDeadline <= 14) {
+      return DeadlineStatus.soon;
+    }
+
+    return DeadlineStatus.open;
+  }
+
+  // Helper method to try parsing dates in different formats
+  DateTime? _tryParseDate(String dateStr) {
+    // List of common date formats to try
+    final dateFormats = [
+      'yyyy-MM-dd',
+      'MM/dd/yyyy',
+      'MMMM d, yyyy',
+      'MMM d, yyyy',
+      'd MMMM yyyy',
+      'yyyy.MM.dd',
+    ];
+
+    // Try parsing with each format
+    for (final format in dateFormats) {
+      try {
+        return DateFormat(format).parse(dateStr);
+      } catch (e) {
+        // Continue to next format if this one fails
+      }
+    }
+
+    // If no formats work, return null
+    return null;
+  }
+
+  // Get text to display based on deadline status
+  String _getDeadlineText(DeadlineStatus status) {
+    switch (status) {
+      case DeadlineStatus.soon:
+        return 'Deadline Soon';
+      case DeadlineStatus.open:
+        return 'Open';
+      case DeadlineStatus.closed:
+        return 'Closed';
+      case DeadlineStatus.unknown:
+        return 'Open'; // Default to open if we can't determine
+    }
+  }
+
+  // Get header gradient colors based on deadline status
+  List<Color> _getHeaderColors(DeadlineStatus status) {
+    switch (status) {
+      case DeadlineStatus.soon:
+        return [
+          Colors.orange.shade700,
+          Colors.orange.shade400
+        ]; // Urgent orange
+      case DeadlineStatus.open:
+        return [
+          Colors.green.shade600,
+          Colors.green.shade400
+        ]; // Green for open/no deadline
+      case DeadlineStatus.closed:
+        return [Colors.grey.shade700, Colors.grey.shade500]; // Grey for closed
+      case DeadlineStatus.unknown:
+        return [
+          TColors.primary,
+          TColors.primary.withAlpha(180)
+        ]; // Default to primary color
+    }
   }
 }

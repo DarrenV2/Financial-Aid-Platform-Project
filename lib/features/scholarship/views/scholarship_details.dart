@@ -3,6 +3,7 @@ import 'package:financial_aid_project/utils/constants/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:share_plus/share_plus.dart';
 import '../models/scholarship.dart';
 
 class ScholarshipDetails extends StatefulWidget {
@@ -76,9 +77,49 @@ class _ScholarshipDetailsState extends State<ScholarshipDetails> {
     );
   }
 
+  // Method to share scholarship details
+  void _shareScholarship() async {
+    try {
+      // Create a formatted text for sharing
+      final String descriptionPreview =
+          widget.scholarship.description.length > 150
+              ? '${widget.scholarship.description.substring(0, 150)}...'
+              : widget.scholarship.description;
+
+      final String shareText = '''
+📚 Check out this scholarship opportunity! 📚
+
+${widget.scholarship.title}
+Amount: ${widget.scholarship.amount}
+Deadline: ${widget.scholarship.deadline}
+
+$descriptionPreview
+
+${widget.scholarship.applicationLink?.isNotEmpty == true ? "Apply here: ${widget.scholarship.applicationLink}" : ""}
+''';
+
+      await SharePlus.instance.share(
+        ShareParams(
+          text: shareText,
+          subject: 'Scholarship Opportunity: ${widget.scholarship.title}',
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error sharing: $e'),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
+
   // Method to launch URL
   Future<void> _launchUrl(String? urlString) async {
     if (urlString == null || urlString.isEmpty) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('No URL provided for this scholarship'),
@@ -92,6 +133,7 @@ class _ScholarshipDetailsState extends State<ScholarshipDetails> {
     final Uri url = Uri.parse(urlString);
     try {
       if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Could not launch $urlString'),
@@ -101,6 +143,7 @@ class _ScholarshipDetailsState extends State<ScholarshipDetails> {
         );
       }
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error launching URL: $e'),
@@ -130,12 +173,7 @@ class _ScholarshipDetailsState extends State<ScholarshipDetails> {
                     )),
                 IconButton(
                   icon: const Icon(Icons.share),
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Share feature coming soon')),
-                    );
-                  },
+                  onPressed: _shareScholarship,
                 ),
               ],
             ),
@@ -182,11 +220,7 @@ class _ScholarshipDetailsState extends State<ScholarshipDetails> {
                   )),
               IconButton(
                 icon: const Icon(Icons.share, color: Colors.white),
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Share feature coming soon')),
-                  );
-                },
+                onPressed: _shareScholarship,
               ),
             ],
           ),

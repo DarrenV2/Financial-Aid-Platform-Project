@@ -14,7 +14,7 @@ class TRoutes {
   static const userScholarships = '/user-dashboard/scholarships';
   static const userApplications = '/user-dashboard/applications';
   static const userProfile = '/user-dashboard/profile';
-  static const userNotifications = '/user-dashboard/notifications';
+  static const userCoaching = '/user-dashboard/coaching';
 
   // Admin dashboard routes
   static const adminDashboard = '/admin-dashboard';
@@ -26,4 +26,12 @@ class TRoutes {
   static const scholarshipList = '/scholarships';
   static const scholarshipDetails = '/scholarship-details';
   static const savedScholarships = '/saved-scholarships';
+
+  // Coaching routes
+  static const coaching = '/coaching';
+  static const coachingAssessment = '/coaching/assessment';
+  static const coachingResults = '/coaching/results';
+  static const learningPlan = '/coaching/learning-plan';
+  static const moduleDetail = '/coaching/module';
+  static const recommendationDetail = '/coaching/recommendation';
 }

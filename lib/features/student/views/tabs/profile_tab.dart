@@ -4,14 +4,24 @@ import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:financial_aid_project/features/student/controllers/profile_controller.dart';
 import 'package:financial_aid_project/utils/constants/colors.dart';
 
-class ProfileTab extends StatelessWidget {
+class ProfileTab extends StatefulWidget {
   const ProfileTab({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    // Initialize the profile controller
-    final controller = Get.put(ProfileController());
+  State<ProfileTab> createState() => _ProfileTabState();
+}
 
+class _ProfileTabState extends State<ProfileTab> {
+  late final ProfileController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.put(ProfileController());
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Obx(() {
       if (controller.isLoading.value) {
         return const Center(child: CircularProgressIndicator());
@@ -499,7 +509,7 @@ class ProfileTab extends StatelessWidget {
                           const SizedBox(height: 10),
                           Row(
                             children: [
-                              Text("${controller.gpa.value.toStringAsFixed(2)}",
+                              Text(controller.gpa.value.toStringAsFixed(2),
                                   style: const TextStyle(
                                       fontWeight: FontWeight.bold)),
                               Expanded(

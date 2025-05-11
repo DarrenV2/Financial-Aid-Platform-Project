@@ -41,11 +41,14 @@ class ProfileController extends GetxController {
   // GPA value
   RxDouble gpa = 0.0.obs;
 
+  // Track if controllers have been initialized
+  bool _controllersInitialized = false;
+
   @override
   void onInit() {
     super.onInit();
-    fetchUserData();
     initializeControllers();
+    fetchUserData();
   }
 
   @override
@@ -55,6 +58,10 @@ class ProfileController extends GetxController {
   }
 
   void initializeControllers() {
+    if (_controllersInitialized) {
+      disposeControllers();
+    }
+
     firstNameController = TextEditingController();
     lastNameController = TextEditingController();
     dobController = TextEditingController();
@@ -62,16 +69,21 @@ class ProfileController extends GetxController {
     emailController = TextEditingController();
     phoneController = TextEditingController();
     gpaController = TextEditingController(text: "0.00");
+
+    _controllersInitialized = true;
   }
 
   void disposeControllers() {
-    firstNameController.dispose();
-    lastNameController.dispose();
-    dobController.dispose();
-    addressController.dispose();
-    emailController.dispose();
-    phoneController.dispose();
-    gpaController.dispose();
+    if (_controllersInitialized) {
+      firstNameController.dispose();
+      lastNameController.dispose();
+      dobController.dispose();
+      addressController.dispose();
+      emailController.dispose();
+      phoneController.dispose();
+      gpaController.dispose();
+      _controllersInitialized = false;
+    }
   }
 
   Future<void> fetchUserData() async {
@@ -79,6 +91,11 @@ class ProfileController extends GetxController {
     try {
       final userData = await userRepository.fetchUserDetails();
       user.value = userData;
+
+      // Ensure controllers are properly initialized
+      if (!_controllersInitialized) {
+        initializeControllers();
+      }
 
       // Update controllers with user data
       firstNameController.text = userData.firstName;

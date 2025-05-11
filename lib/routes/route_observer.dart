@@ -34,7 +34,6 @@ class RouteObservers extends GetObserver {
     TRoutes.userScholarships,
     TRoutes.userApplications,
     TRoutes.userProfile,
-    TRoutes.userNotifications,
   ];
 
   // Map routes to user tab IDs
@@ -42,7 +41,6 @@ class RouteObservers extends GetObserver {
     TRoutes.userScholarships: 'scholarships',
     TRoutes.userApplications: 'applications',
     TRoutes.userProfile: 'profile',
-    TRoutes.userNotifications: 'notifications',
   };
 
   /// Called when a route is popped from the navigation stack.
