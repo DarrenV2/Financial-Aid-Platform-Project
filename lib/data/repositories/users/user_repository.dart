@@ -61,4 +61,20 @@ class UserRepository extends GetxController {
       throw 'Failed to update user data: ${e.toString()}';
     }
   }
+
+  /// Function to check if an email is already registered
+  Future<bool> isEmailRegistered(String email) async {
+    try {
+      final querySnapshot = await _db
+          .collection('Users')
+          .where('Email', isEqualTo: email)
+          .limit(1)
+          .get();
+
+      return querySnapshot.docs.isNotEmpty;
+    } catch (e) {
+      // In case of error, assume email is not registered for safety
+      return false;
+    }
+  }
 }

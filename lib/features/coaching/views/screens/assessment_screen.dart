@@ -5,10 +5,7 @@ import '../../controllers/coaching_controller.dart';
 import '../widgets/question_widget.dart';
 
 class AssessmentScreen extends StatefulWidget {
-  final bool isPreAssessment;
-
-  const AssessmentScreen({Key? key, required this.isPreAssessment})
-      : super(key: key);
+  const AssessmentScreen({Key? key}) : super(key: key);
 
   @override
   State<AssessmentScreen> createState() => _AssessmentScreenState();
@@ -25,21 +22,15 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
     assessmentController = Get.put(AssessmentController());
     coachingController = Get.find<CoachingController>();
 
-    // Initialize the appropriate assessment
-    if (widget.isPreAssessment) {
-      assessmentController.initPreAssessment();
-    } else {
-      assessmentController.initPostAssessment();
-    }
+    // Initialize pre-assessment
+    assessmentController.initPreAssessment();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.isPreAssessment
-            ? 'Scholarship Pre-Assessment'
-            : 'Scholarship Post-Assessment'),
+        title: const Text('Scholarship Pre-Assessment'),
         elevation: 0,
       ),
       body: Obx(() {
@@ -168,7 +159,6 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                               '/coaching/results',
                               arguments: {
                                 'result': result,
-                                'isPostAssessment': !widget.isPreAssessment,
                               },
                             );
                           } else {

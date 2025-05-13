@@ -250,6 +250,10 @@ class AssessmentData {
             id: 'research_team',
             text: 'Member of a research team',
             value: 'research_team'),
+        Option(
+            id: 'academic_competition',
+            text: 'Academic competition',
+            value: 'academic_competition'),
         Option(id: 'none', text: 'None', value: 'none'),
       ],
       category: 'academic',
@@ -276,7 +280,7 @@ class AssessmentData {
             value: 'committee_chair'),
         Option(
             id: 'project_lead', text: 'Project Leader', value: 'project_lead'),
-        Option(id: 'none', text: 'No leadership experience', value: 'none'),
+        Option(id: 'none', text: 'None of the above', value: 'none'),
       ],
       category: 'leadership',
     ),
@@ -381,159 +385,12 @@ class AssessmentData {
     ),
   ];
 
-  // Post-assessment questions
-  final List<Question> postAssessmentQuestions = [
-    Question(
-      id: 'gpa_improvement',
-      text: 'Has your GPA improved since beginning the coaching program?',
-      type: QuestionType.boolean,
-      category: 'academic',
-    ),
-    Question(
-      id: 'new_academic_achievements',
-      text: 'Have you earned any new academic achievements or honors?',
-      type: QuestionType.multipleChoice,
-      options: [
-        Option(id: 'deans_list', text: 'Dean\'s List', value: 'deans_list'),
-        Option(
-            id: 'gpa_improvement',
-            text: 'GPA Improvement',
-            value: 'gpa_improvement'),
-        Option(
-            id: 'scholarship', text: 'New Scholarship', value: 'scholarship'),
-        Option(
-            id: 'course_award',
-            text: 'Course-specific Recognition',
-            value: 'course_award'),
-        Option(
-            id: 'conference',
-            text: 'Presented at Conference',
-            value: 'conference'),
-        Option(id: 'publication', text: 'Publication', value: 'publication'),
-        Option(
-            id: 'other_achievement',
-            text: 'Other Achievement',
-            value: 'other_achievement'),
-        Option(id: 'none', text: 'No new achievements', value: 'none'),
-      ],
-      category: 'academic',
-    ),
-    Question(
-      id: 'new_leadership_roles',
-      text:
-          'Have you taken on any leadership roles since beginning the program?',
-      type: QuestionType.multipleChoice,
-      options: [
-        Option(
-            id: 'president',
-            text: 'President/Chair of Organization',
-            value: 'president'),
-        Option(
-            id: 'vice_president',
-            text: 'Vice President',
-            value: 'vice_president'),
-        Option(id: 'secretary', text: 'Secretary', value: 'secretary'),
-        Option(id: 'treasurer', text: 'Treasurer', value: 'treasurer'),
-        Option(id: 'team_captain', text: 'Team Captain', value: 'team_captain'),
-        Option(
-            id: 'committee_chair',
-            text: 'Committee Chair',
-            value: 'committee_chair'),
-        Option(
-            id: 'project_lead', text: 'Project Leader', value: 'project_lead'),
-        Option(id: 'none', text: 'No new leadership roles', value: 'none'),
-      ],
-      category: 'leadership',
-    ),
-    Question(
-      id: 'new_extracurricular',
-      text: 'Have you joined any new extracurricular activities?',
-      type: QuestionType.multipleChoice,
-      options: [
-        Option(id: 'sports', text: 'Sports Team', value: 'sports'),
-        Option(id: 'arts', text: 'Arts & Cultural Organization', value: 'arts'),
-        Option(id: 'clubs', text: 'Academic Club', value: 'clubs'),
-        Option(
-            id: 'student_gov',
-            text: 'Student Government',
-            value: 'student_gov'),
-        Option(
-            id: 'volunteer',
-            text: 'Volunteer Organization',
-            value: 'volunteer'),
-        Option(id: 'internship', text: 'Internship/Co-op', value: 'internship'),
-        Option(
-            id: 'other_activity',
-            text: 'Other Activity',
-            value: 'other_activity'),
-        Option(id: 'none', text: 'No new activities', value: 'none'),
-      ],
-      category: 'extracurricular',
-    ),
-    Question(
-      id: 'community_service_hours',
-      text: 'How many hours of community service have you completed?',
-      type: QuestionType.number,
-      category: 'community_service',
-    ),
-    Question(
-      id: 'essay_improvement',
-      text: 'Do you feel more confident in your essay writing abilities?',
-      type: QuestionType.singleChoice,
-      options: [
-        Option(id: 'much_better', text: 'Much better', value: 'much_better'),
-        Option(
-            id: 'somewhat_better',
-            text: 'Somewhat better',
-            value: 'somewhat_better'),
-        Option(id: 'same', text: 'About the same', value: 'same'),
-        Option(
-            id: 'somewhat_worse',
-            text: 'Somewhat worse',
-            value: 'somewhat_worse'),
-        Option(id: 'much_worse', text: 'Much worse', value: 'much_worse'),
-      ],
-      category: 'academic',
-    ),
-    Question(
-      id: 'scholarship_applications',
-      text: 'How many scholarship applications have you submitted?',
-      type: QuestionType.number,
-      category: 'personal',
-    ),
-    Question(
-      id: 'application_confidence',
-      text: 'How confident are you in your chances of receiving a scholarship?',
-      type: QuestionType.singleChoice,
-      options: [
-        Option(
-            id: 'very_confident',
-            text: 'Very confident',
-            value: 'very_confident'),
-        Option(id: 'confident', text: 'Confident', value: 'confident'),
-        Option(id: 'neutral', text: 'Neutral', value: 'neutral'),
-        Option(
-            id: 'not_confident', text: 'Not confident', value: 'not_confident'),
-        Option(
-            id: 'very_not_confident',
-            text: 'Not at all confident',
-            value: 'very_not_confident'),
-      ],
-      category: 'personal',
-    ),
-  ];
-
   Question? findQuestionById(String id) {
-    // Search in pre-assessment questions
+    // Search only in pre-assessment questions
     try {
       return preAssessmentQuestions.firstWhere((q) => q.id == id);
     } catch (e) {
-      // Search in post-assessment questions
-      try {
-        return postAssessmentQuestions.firstWhere((q) => q.id == id);
-      } catch (e) {
-        return null;
-      }
+      return null;
     }
   }
 }

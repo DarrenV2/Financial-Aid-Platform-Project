@@ -1,1 +1,35 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"financial-aid-firebase","appId":"1:858689639966:android:ec1c83933789264967400f","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"financial-aid-firebase","configurations":{"web":"1:858689639966:web:cb981a66a033df5767400f"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "financial-aid-firebase",
+          "appId": "1:858689639966:android:ec1c83933789264967400f",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "financial-aid-firebase",
+          "configurations": {
+            "web": "1:858689639966:web:cb981a66a033df5767400f"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}

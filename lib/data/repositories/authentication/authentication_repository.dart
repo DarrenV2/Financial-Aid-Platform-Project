@@ -24,6 +24,15 @@ class AuthenticationRepository extends GetxController {
     _auth.setPersistence(Persistence.LOCAL);
   }
 
+  // Explicitly set Firebase Auth persistence to LOCAL
+  Future<void> setAuthPersistence() async {
+    try {
+      await _auth.setPersistence(Persistence.LOCAL);
+    } catch (e) {
+      // Silently handle errors
+    }
+  }
+
 // Function to determine the relevant screen and redirect accordingly.
   void screenRedirect() async {
     final user = _auth.currentUser;

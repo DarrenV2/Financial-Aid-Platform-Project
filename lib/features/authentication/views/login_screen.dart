@@ -16,11 +16,19 @@ class LoginScreen extends StatefulWidget {
 class LoginScreenState extends State<LoginScreen> {
   // Use a local form key instead of one from controller
   final _loginFormKey = GlobalKey<FormState>();
+  // Create local controller instance to avoid disposal issues
+  late final LoginController loginController;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the controller here
+    loginController = Get.find<LoginController>();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final loginController = LoginController.instance;
-
+    // Don't get a new instance here
     return Scaffold(
       backgroundColor: Colors.grey[100],
       body: LayoutBuilder(
@@ -342,6 +350,19 @@ class LoginScreenState extends State<LoginScreen> {
           ),
         ),
         onPressed: () async {
+          // Ensure the controller is still valid
+          if (!mounted) return;
+
+          // Safely trim input spaces before validation
+          final emailText = loginController.email.text.trim();
+          final passwordText = loginController.password.text.trim();
+
+          // Only modify the text controllers if widget is still mounted
+          if (mounted) {
+            loginController.email.text = emailText;
+            loginController.password.text = passwordText;
+          }
+
           if (_loginFormKey.currentState!.validate()) {
             await loginController.emailAndPasswordSignIn();
           }

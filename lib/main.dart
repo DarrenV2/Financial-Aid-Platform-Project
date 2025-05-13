@@ -34,7 +34,13 @@ Future<void> main() async {
 
   // Initialize Firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform)
-      .then((value) => Get.put(AuthenticationRepository()));
+      .then((value) {
+    // Create and initialize authentication repository
+    final authRepo = Get.put(AuthenticationRepository());
+
+    // Explicitly set persistence to LOCAL for better state persistence across page refreshes
+    authRepo.setAuthPersistence();
+  });
 
   // LoginController is now handled in GeneralBindings
   // Get.put(LoginController());

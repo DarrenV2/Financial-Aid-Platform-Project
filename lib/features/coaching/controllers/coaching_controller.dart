@@ -120,11 +120,7 @@ class CoachingController extends GetxController {
   }
 
   void startPreAssessment() {
-    Get.toNamed('/coaching/assessment', arguments: {'isPreAssessment': true});
-  }
-
-  void startPostAssessment() {
-    Get.toNamed('/coaching/assessment', arguments: {'isPreAssessment': false});
+    Get.toNamed('/coaching/assessment');
   }
 
   void viewLearningPlan() {

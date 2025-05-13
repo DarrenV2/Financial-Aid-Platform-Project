@@ -5,12 +5,10 @@ import '../../controllers/coaching_controller.dart';
 
 class AssessmentResultScreen extends StatefulWidget {
   final AssessmentResult result;
-  final bool isPostAssessment;
 
   const AssessmentResultScreen({
     Key? key,
     required this.result,
-    this.isPostAssessment = false,
   }) : super(key: key);
 
   @override
@@ -31,9 +29,7 @@ class _AssessmentResultScreenState extends State<AssessmentResultScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.isPostAssessment
-            ? 'Progress Assessment Results'
-            : 'Assessment Results'),
+        title: Text('Assessment Results'),
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -417,18 +413,30 @@ class _AssessmentResultScreenState extends State<AssessmentResultScreen> {
 
   Widget _buildRecommendationItem(
       BuildContext context, Recommendation recommendation) {
-    return GestureDetector(
+    return InkWell(
       onTap: () {
         Get.toNamed(
           '/coaching/recommendation',
           arguments: {'recommendation': recommendation},
         );
       },
+      borderRadius: BorderRadius.circular(12),
+      splashColor: _getPriorityColor(recommendation.priority).withOpacity(0.1),
+      highlightColor:
+          _getPriorityColor(recommendation.priority).withOpacity(0.05),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.grey[100],
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: Colors.grey[300]!),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              spreadRadius: 1,
+              blurRadius: 3,
+              offset: const Offset(0, 1),
+            ),
+          ],
         ),
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -475,10 +483,32 @@ class _AssessmentResultScreenState extends State<AssessmentResultScreen> {
                     ),
                   ),
                 ),
-                const Icon(
-                  Icons.arrow_forward_ios,
-                  size: 16,
-                  color: Colors.grey,
+                Container(
+                  decoration: BoxDecoration(
+                    color: _getPriorityColor(recommendation.priority)
+                        .withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  padding: const EdgeInsets.all(8),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'View Details',
+                        style: TextStyle(
+                          color: _getPriorityColor(recommendation.priority),
+                          fontWeight: FontWeight.w500,
+                          fontSize: 12,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Icon(
+                        Icons.arrow_forward,
+                        size: 16,
+                        color: _getPriorityColor(recommendation.priority),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -488,7 +518,9 @@ class _AssessmentResultScreenState extends State<AssessmentResultScreen> {
     );
   }
 
-  String _formatCategoryName(String category) {
+  String _formatCategoryName(String? category) {
+    if (category == null) return 'General';
+
     return category
         .split('_')
         .map((word) => word[0].toUpperCase() + word.substring(1))
@@ -520,15 +552,52 @@ class _AssessmentResultScreenState extends State<AssessmentResultScreen> {
     }
   }
 
-  Color _getPriorityColor(int priority) {
-    if (priority >= 4) return Colors.red; // High priority
-    if (priority >= 2) return Colors.orange; // Medium priority
-    return Colors.blue; // Low priority
+  Color _getPriorityColor(RecommendationPriority priority) {
+    switch (priority) {
+      case RecommendationPriority.high:
+        return Colors.red;
+      case RecommendationPriority.medium:
+        return Colors.orange;
+      case RecommendationPriority.low:
+        return Colors.blue;
+      default:
+        return Colors.blue;
+    }
   }
 
-  String _getPriorityLabel(int priority) {
-    if (priority >= 4) return 'High Priority';
-    if (priority >= 2) return 'Medium Priority';
-    return 'Recommended';
+  String _getPriorityLabel(RecommendationPriority priority) {
+    switch (priority) {
+      case RecommendationPriority.high:
+        return 'High Priority';
+      case RecommendationPriority.medium:
+        return 'Medium Priority';
+      case RecommendationPriority.low:
+        return 'Recommended';
+      default:
+        return 'Recommended';
+    }
+  }
+
+  Color _getCategoryColor(String? category) {
+    if (category == null) return Colors.grey;
+
+    switch (category.toLowerCase()) {
+      case 'academic':
+        return Colors.blue;
+      case 'financial':
+        return Colors.green;
+      case 'leadership':
+        return Colors.purple;
+      case 'extracurricular':
+        return Colors.orange;
+      case 'community_service':
+        return Colors.red;
+      case 'strategy':
+        return Colors.teal;
+      case 'personal':
+        return Colors.deepPurple;
+      default:
+        return Colors.grey;
+    }
   }
 }

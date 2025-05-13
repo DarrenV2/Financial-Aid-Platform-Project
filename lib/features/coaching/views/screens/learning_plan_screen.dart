@@ -93,18 +93,33 @@ class _LearningPlanScreenState extends State<LearningPlanScreen> {
                   if (learningController.recommendedModules.isEmpty)
                     _buildEmptyRecommendationsMessage(context)
                   else
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: learningController.recommendedModules.length,
-                      itemBuilder: (context, index) {
-                        return _buildModuleCard(
-                          context,
-                          learningController,
-                          learningController.recommendedModules[index],
-                          priority: index + 1,
-                        );
-                      },
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Found ${learningController.recommendedModules.length} recommended modules',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey[600],
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount:
+                              learningController.recommendedModules.length,
+                          itemBuilder: (context, index) {
+                            return _buildModuleCard(
+                              context,
+                              learningController,
+                              learningController.recommendedModules[index],
+                              priority: index + 1,
+                            );
+                          },
+                        ),
+                      ],
                     ),
 
                   const SizedBox(height: 24),
@@ -177,7 +192,8 @@ class _LearningPlanScreenState extends State<LearningPlanScreen> {
       'academic',
       'leadership',
       'community_service',
-      'strategy'
+      'strategy',
+      'personal'
     ];
 
     return categories.map((category) {
@@ -401,6 +417,8 @@ class _LearningPlanScreenState extends State<LearningPlanScreen> {
         return Colors.red;
       case 'strategy':
         return Colors.purple;
+      case 'personal':
+        return Colors.deepPurple;
       default:
         return Colors.grey;
     }

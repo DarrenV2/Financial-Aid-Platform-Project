@@ -14,10 +14,18 @@ class SignupScreen extends StatefulWidget {
 }
 
 class SignupScreenState extends State<SignupScreen> {
-  final controller = Get.put(SignupController());
+  // Create local controller instance to avoid disposal issues
+  late final SignupController controller;
 
   // Create a local form key in the view
   final _signupFormKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize controller once
+    controller = Get.put(SignupController());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -322,11 +330,20 @@ class SignupScreenState extends State<SignupScreen> {
           if (value.length < 6) {
             return 'Password must be at least 6 characters';
           }
+          if (!value.contains(RegExp(r'[A-Z]'))) {
+            return 'Password must contain at least one capital letter';
+          }
+          if (!value.contains(RegExp(r'[0-9]'))) {
+            return 'Password must contain at least one number';
+          }
+          if (!value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
+            return 'Password must contain at least one special character';
+          }
           return null;
         },
         decoration: InputDecoration(
           labelText: "Password",
-          hintText: "********",
+          hintText: "Must include capital, number & special character",
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
           prefixIcon: const Icon(EvaIcons.lock, color: TColors.primary),
           suffixIcon: IconButton(
@@ -348,6 +365,23 @@ class SignupScreenState extends State<SignupScreen> {
       width: double.infinity,
       child: ElevatedButton(
         onPressed: () {
+          // Ensure the widget is still mounted
+          if (!mounted) return;
+
+          // Safely trim all input fields before validation
+          final firstNameText = controller.firstName.text.trim();
+          final lastNameText = controller.lastName.text.trim();
+          final emailText = controller.email.text.trim();
+          final passwordText = controller.password.text.trim();
+
+          // Only update text controllers if widget is still mounted
+          if (mounted) {
+            controller.firstName.text = firstNameText;
+            controller.lastName.text = lastNameText;
+            controller.email.text = emailText;
+            controller.password.text = passwordText;
+          }
+
           if (_signupFormKey.currentState!.validate()) {
             controller.registerUser();
           }

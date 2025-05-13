@@ -181,9 +181,22 @@ ${widget.scholarship.applicationLink?.isNotEmpty == true ? "Apply here: ${widget
             floatingActionButton: FloatingActionButton.extended(
               onPressed: () => _launchUrl(widget.scholarship.applicationLink),
               backgroundColor: TColors.primary,
-              label: const Text('Apply Now'),
+              foregroundColor: Colors.white,
+              elevation: 6,
+              label: const Text(
+                'Apply Now',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.5,
+                ),
+              ),
               icon: const Icon(Icons.send),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
             ),
+            floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
           );
   }
 
@@ -278,6 +291,15 @@ ${widget.scholarship.applicationLink?.isNotEmpty == true ? "Apply here: ${widget
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   minimumSize: const Size(double.infinity, 50),
+                  foregroundColor: TColors.primary,
+                  side: BorderSide(color: TColors.primary, width: 2),
+                  textStyle: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
             ],
@@ -329,6 +351,15 @@ ${widget.scholarship.applicationLink?.isNotEmpty == true ? "Apply here: ${widget
                     label: const Text('Visit Website'),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
+                      foregroundColor: TColors.primary,
+                      side: BorderSide(color: TColors.primary, width: 2),
+                      textStyle: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                   ),
                 ],
@@ -565,13 +596,17 @@ ${widget.scholarship.applicationLink?.isNotEmpty == true ? "Apply here: ${widget
         backgroundColor: TColors.primary,
         foregroundColor: Colors.white,
         padding: const EdgeInsets.symmetric(vertical: 16),
+        minimumSize: const Size(double.infinity, 56),
         textStyle: const TextStyle(
-          fontSize: 16,
+          fontSize: 18,
           fontWeight: FontWeight.bold,
+          letterSpacing: 0.5,
         ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(12),
         ),
+        elevation: 4,
+        shadowColor: TColors.primary.withOpacity(0.4),
       ),
     );
   }

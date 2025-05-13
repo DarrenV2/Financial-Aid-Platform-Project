@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:financial_aid_project/utils/constants/colors.dart';
 import 'package:financial_aid_project/features/scholarship/controllers/scholarship_controllers.dart';
-import 'package:financial_aid_project/features/scholarship/views/components/banner.dart';
 import 'package:financial_aid_project/features/scholarship/views/components/scholarship_card.dart';
 import 'package:financial_aid_project/features/scholarship/controllers/saved_scholarship_controller.dart';
 import 'package:financial_aid_project/features/scholarship/views/saved_scholarships_screen.dart';
@@ -183,16 +182,6 @@ class _ScholarshipListState extends State<ScholarshipList> {
 
           // Filters section
           if (_showFilters) _buildFilters(),
-
-          // Banner (only display if not searching and not filtering)
-          if (!_showFilters &&
-              _searchController.text.isEmpty &&
-              widget.isEmbedded)
-            BannerWidget(
-              onClick: () {
-                // Navigate to profile setup
-              },
-            ),
 
           // Scholarships grid
           Expanded(

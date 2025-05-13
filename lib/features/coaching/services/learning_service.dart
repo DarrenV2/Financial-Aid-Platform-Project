@@ -21,19 +21,48 @@ class LearningService {
 
   List<LearningModule> getRecommendedModules(AssessmentResult result) {
     List<String> recommendedModuleIds = [];
+    List<String> missingModuleIds = [];
+    Set<String> uniqueModuleIds = {};
 
     // Collect all module IDs from recommendations
     for (var recommendation in result.recommendations) {
-      recommendedModuleIds.addAll(recommendation.relatedContentIds);
+      // Add related content IDs
+      if (recommendation.relatedContentIds.isNotEmpty) {
+        recommendedModuleIds.addAll(recommendation.relatedContentIds);
+      }
+
+      // Also add the primary learning module ID if it exists
+      if (recommendation.learningModuleId != null) {
+        recommendedModuleIds.add(recommendation.learningModuleId!);
+      }
     }
 
     // Get modules by IDs
     List<LearningModule> recommendedModules = [];
     for (String id in recommendedModuleIds) {
+      // Skip if we've already added this module to prevent duplicates
+      if (uniqueModuleIds.contains(id)) continue;
+
       LearningModule? module = getModuleById(id);
       if (module != null) {
         recommendedModules.add(module);
+        uniqueModuleIds.add(id); // Mark this ID as added
+      } else {
+        missingModuleIds.add(id);
       }
+    }
+
+    // Print diagnostic information
+    print('Total recommended module IDs: ${recommendedModuleIds.length}');
+    print('Found modules: ${recommendedModules.length}');
+    if (missingModuleIds.isNotEmpty) {
+      print('WARNING: Missing modules: ${missingModuleIds.join(", ")}');
+    }
+
+    // Print all available modules for reference
+    print('Available module IDs:');
+    for (var module in _contentData.learningModules) {
+      print('  - ${module.id} (${module.category})');
     }
 
     return recommendedModules;

@@ -1,3 +1,17 @@
+// Add RecommendationPriority enum
+enum RecommendationPriority {
+  low(1),
+  medium(3),
+  high(5);
+
+  final int value;
+  const RecommendationPriority(this.value);
+
+  int compareTo(RecommendationPriority other) {
+    return value.compareTo(other.value);
+  }
+}
+
 class AssessmentResult {
   final DateTime timestamp;
   final double overallScore;
@@ -18,16 +32,20 @@ class Recommendation {
   final String id;
   final String title;
   final String description;
-  final String category;
-  final int priority; // 1-5, with 5 being highest priority
+  final String? category;
+  final RecommendationPriority priority;
+  final String? action;
+  final String? learningModuleId;
   final List<String> relatedContentIds;
 
   Recommendation({
     required this.id,
     required this.title,
     required this.description,
-    required this.category,
+    this.category,
     required this.priority,
+    this.action,
+    this.learningModuleId,
     this.relatedContentIds = const [],
   });
 }

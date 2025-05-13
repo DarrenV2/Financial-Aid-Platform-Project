@@ -10,10 +10,6 @@ class AssessmentService {
     return _assessmentData.preAssessmentQuestions;
   }
 
-  List<Question> getPostAssessmentQuestions() {
-    return _assessmentData.postAssessmentQuestions;
-  }
-
   Future<AssessmentResult> evaluatePreAssessment(List<Answer> answers) async {
     // Calculate scores based on answers
     double overallScore = 0.0;
@@ -86,6 +82,8 @@ class AssessmentService {
         return _calculateLeadershipScore(answers);
       case 'community_service':
         return _calculateCommunityServiceScore(answers);
+      case 'personal':
+        return _calculatePersonalScore(answers);
       default:
         return 0.0;
     }
@@ -539,6 +537,86 @@ class AssessmentService {
     return totalQuestions > 0 ? (score / (totalQuestions * 5.0)) * 100 : 0.0;
   }
 
+  double _calculatePersonalScore(List<Answer> answers) {
+    double score = 0.0;
+    int totalQuestions = 0;
+
+    for (Answer answer in answers) {
+      String questionId = answer.questionId;
+      Question? question = _assessmentData.findQuestionById(questionId);
+
+      if (question != null) {
+        totalQuestions++;
+
+        // Citizenship
+        if (questionId == 'citizenship') {
+          bool isJamaican = answer.value.toString().toLowerCase() == 'yes';
+          score += isJamaican ? 5.0 : 0.0;
+        }
+
+        // UTech student ID
+        else if (questionId == 'utech_student') {
+          bool hasStudentId = answer.value.toString().toLowerCase() == 'yes';
+          score += hasStudentId ? 5.0 : 0.0;
+        }
+
+        // Enrollment status
+        else if (questionId == 'enrollment_status') {
+          String status = answer.value.toString().toLowerCase();
+          score += (status == 'full_time') ? 5.0 : 3.0;
+        }
+
+        // Previous scholarship
+        else if (questionId == 'previous_scholarship') {
+          bool hadScholarship = answer.value.toString().toLowerCase() == 'yes';
+          score += hadScholarship
+              ? 3.0
+              : 5.0; // Give higher score to those who haven't had scholarships
+        }
+
+        // Career goals
+        else if (questionId == 'career_goals') {
+          String goal = answer.value.toString().toLowerCase();
+          // All goals are valid, but clear direction gets higher score
+          score += (goal == 'undecided') ? 3.0 : 5.0;
+        }
+
+        // Post-assessment: Scholarship applications
+        else if (questionId == 'scholarship_applications') {
+          int applications = int.tryParse(answer.value.toString()) ?? 0;
+          if (applications > 10) {
+            score += 5.0;
+          } else if (applications > 5) {
+            score += 4.0;
+          } else if (applications > 0) {
+            score += 3.0;
+          } else {
+            score += 0.0;
+          }
+        }
+
+        // Post-assessment: Application confidence
+        else if (questionId == 'application_confidence') {
+          String confidence = answer.value.toString().toLowerCase();
+          if (confidence == 'very_confident') {
+            score += 5.0;
+          } else if (confidence == 'confident') {
+            score += 4.0;
+          } else if (confidence == 'neutral') {
+            score += 3.0;
+          } else if (confidence == 'not_confident') {
+            score += 2.0;
+          } else {
+            score += 1.0;
+          }
+        }
+      }
+    }
+
+    // Normalize score to 0-100
+    return totalQuestions > 0 ? (score / (totalQuestions * 5.0)) * 100 : 0.0;
+  }
+
   bool _isMeritEligible(Map<String, double> categoryScores) {
     // Check if eligible for merit-based scholarships
     double academicScore = categoryScores['academic'] ?? 0.0;
@@ -562,184 +640,327 @@ class AssessmentService {
       Map<String, double> categoryScores) {
     List<Recommendation> recommendations = [];
 
-    // Generate recommendations based on category scores
-    categoryScores.forEach((category, score) {
-      if (score < 60.0) {
-        // Low score, high priority recommendation
-        recommendations.add(_getRecommendationForCategory(category, 5));
-      } else if (score < 80.0) {
-        // Medium score, medium priority recommendation
-        recommendations.add(_getRecommendationForCategory(category, 3));
-      } else {
-        // High score, low priority recommendation (for further improvement)
-        recommendations.add(_getRecommendationForCategory(category, 1));
+    // Academic recommendations
+    if (categoryScores.containsKey('academic')) {
+      double score = categoryScores['academic']!;
+      if (score < 50) {
+        recommendations.add(
+          Recommendation(
+            id: 'academic_improvement',
+            title: 'Improve Academic Performance',
+            description:
+                'Focus on improving your GPA and academic standing to increase scholarship eligibility.',
+            action:
+                'Complete the Academic Performance module in your Learning Plan.',
+            priority: RecommendationPriority.high,
+            learningModuleId: 'module_academic_improvement',
+            category: 'academic',
+            relatedContentIds: [
+              'module_academic_improvement',
+              'module_essay_writing'
+            ],
+          ),
+        );
+      } else if (score < 75) {
+        recommendations.add(
+          Recommendation(
+            id: 'academic_enhancement',
+            title: 'Enhance Academic Profile',
+            description:
+                'Consider additional academic activities such as research or competitions to strengthen your profile.',
+            action: 'Join an academic club or research team.',
+            priority: RecommendationPriority.medium,
+            learningModuleId: 'module_academic_improvement',
+            category: 'academic',
+            relatedContentIds: [
+              'module_academic_improvement',
+              'module_essay_writing'
+            ],
+          ),
+        );
       }
-    });
+    }
 
-    // Sort recommendations by priority (highest first)
-    recommendations.sort((a, b) => b.priority.compareTo(a.priority));
+    // Financial recommendations
+    if (categoryScores.containsKey('financial')) {
+      double score = categoryScores['financial']!;
+      if (score > 75) {
+        recommendations.add(
+          Recommendation(
+            id: 'need_based_scholarships',
+            title: 'Apply for Need-Based Scholarships',
+            description:
+                'Your financial situation qualifies you for need-based scholarships and grants.',
+            action:
+                'Apply for need-based scholarships in the Scholarship section.',
+            priority: RecommendationPriority.high,
+            learningModuleId: 'module_essay_writing',
+            category: 'financial',
+            relatedContentIds: [
+              'module_essay_writing',
+              'module_application_strategy'
+            ],
+          ),
+        );
+      }
+
+      recommendations.add(
+        Recommendation(
+          id: 'financial_planning',
+          title: 'Develop Financial Planning Skills',
+          description:
+              'Learn financial planning strategies to maximize available resources and show financial responsibility to scholarship committees.',
+          action:
+              'Complete the Financial Planning module in your Learning Plan.',
+          priority: RecommendationPriority.medium,
+          learningModuleId: 'module_essay_writing',
+          category: 'financial',
+          relatedContentIds: [
+            'module_essay_writing',
+            'module_application_strategy'
+          ],
+        ),
+      );
+    }
+
+    // Extracurricular recommendations
+    if (categoryScores.containsKey('extracurricular')) {
+      double score = categoryScores['extracurricular']!;
+      if (score < 60) {
+        recommendations.add(
+          Recommendation(
+            id: 'extracurricular_involvement',
+            title: 'Increase Extracurricular Involvement',
+            description:
+                'Join clubs, sports, or activities relevant to your interests and major to demonstrate well-roundedness.',
+            action:
+                'Explore and join at least one extracurricular activity this semester.',
+            priority: RecommendationPriority.medium,
+            learningModuleId: 'module_leadership_development',
+            category: 'extracurricular',
+            relatedContentIds: [
+              'module_leadership_development',
+              'module_community_service'
+            ],
+          ),
+        );
+      }
+    }
+
+    // Leadership recommendations
+    if (categoryScores.containsKey('leadership')) {
+      double score = categoryScores['leadership']!;
+      if (score < 50) {
+        recommendations.add(
+          Recommendation(
+            id: 'leadership_development',
+            title: 'Develop Leadership Skills',
+            description:
+                'Seek opportunities to develop and demonstrate leadership skills through campus organizations or community initiatives.',
+            action:
+                'Complete the Leadership Development module in your Learning Plan.',
+            priority: RecommendationPriority.high,
+            learningModuleId: 'module_leadership_development',
+            category: 'leadership',
+            relatedContentIds: [
+              'module_leadership_development',
+              'module_community_service'
+            ],
+          ),
+        );
+      } else if (score < 75) {
+        recommendations.add(
+          Recommendation(
+            id: 'leadership_role',
+            title: 'Seek Leadership Positions',
+            description:
+                'Consider taking on a leadership role in an organization or initiative that aligns with your interests.',
+            action:
+                'Apply for a leadership position in a club or organization.',
+            priority: RecommendationPriority.medium,
+            learningModuleId: 'module_leadership_development',
+            category: 'leadership',
+            relatedContentIds: [
+              'module_leadership_development',
+              'module_community_service'
+            ],
+          ),
+        );
+      }
+    }
+
+    // Community service recommendations
+    if (categoryScores.containsKey('community_service')) {
+      double score = categoryScores['community_service']!;
+      if (score < 60) {
+        recommendations.add(
+          Recommendation(
+            id: 'community_service',
+            title: 'Engage in Community Service',
+            description:
+                'Participate in volunteer activities that align with your values and interests.',
+            action:
+                'Complete the Community Service module in your Learning Plan.',
+            priority: RecommendationPriority.medium,
+            learningModuleId: 'module_community_service',
+            category: 'community_service',
+            relatedContentIds: [
+              'module_community_service',
+              'module_leadership_development'
+            ],
+          ),
+        );
+      }
+    }
+
+    // Personal category recommendations
+    if (categoryScores.containsKey('personal')) {
+      double score = categoryScores['personal']!;
+
+      // Add recommendation for scholarship application preparation
+      recommendations.add(
+        Recommendation(
+          id: 'personal_statement',
+          title: 'Develop a Compelling Personal Statement',
+          description:
+              'Create a strong personal statement that highlights your background, goals, and motivations for your education.',
+          action:
+              'Complete the Personal Statement Writing module in your Learning Plan.',
+          priority: score < 70
+              ? RecommendationPriority.high
+              : RecommendationPriority.medium,
+          learningModuleId: 'module_personal_statement',
+          category: 'personal',
+          relatedContentIds: [
+            'module_personal_statement',
+            'module_essay_writing'
+          ],
+        ),
+      );
+
+      // For students with low personal category scores
+      if (score < 60) {
+        recommendations.add(
+          Recommendation(
+            id: 'personal_branding',
+            title: 'Develop Your Personal Brand',
+            description:
+                'Create a consistent personal brand that communicates your strengths, values, and aspirations to scholarship committees.',
+            action:
+                'Complete the Personal Branding module in your Learning Plan.',
+            priority: RecommendationPriority.high,
+            learningModuleId: 'module_personal_branding',
+            category: 'personal',
+            relatedContentIds: [
+              'module_personal_branding',
+              'module_application_strategy'
+            ],
+          ),
+        );
+      }
+    }
+
+    // Essay writing recommendation - essential for all applicants
+    recommendations.add(
+      Recommendation(
+        id: 'essay_writing',
+        title: 'Strengthen Scholarship Essay Writing Skills',
+        description:
+            'Develop compelling, well-structured essays that effectively communicate your qualifications and aspirations.',
+        action: 'Complete the Essay Writing module in your Learning Plan.',
+        priority: RecommendationPriority.high,
+        learningModuleId: 'module_essay_writing',
+        category: 'academic',
+        relatedContentIds: [
+          'module_essay_writing',
+          'module_academic_improvement'
+        ],
+      ),
+    );
+
+    // Application strategy recommendation - essential for all applicants
+    recommendations.add(
+      Recommendation(
+        id: 'application_strategy',
+        title: 'Create an Application Strategy',
+        description:
+            'Develop a comprehensive plan for researching and applying to scholarships that match your profile.',
+        action:
+            'Complete the Application Strategy module in your Learning Plan.',
+        priority: RecommendationPriority.high,
+        learningModuleId: 'module_application_strategy',
+        category: 'strategy',
+        relatedContentIds: [
+          'module_application_strategy',
+          'module_essay_writing'
+        ],
+      ),
+    );
 
     return recommendations;
   }
 
-  Recommendation _getRecommendationForCategory(String category, int priority) {
-    // Get appropriate recommendation for the category and priority level
-    switch (category) {
-      case 'academic':
-        return _getAcademicRecommendation(priority);
-      case 'financial':
-        return _getFinancialRecommendation(priority);
-      case 'extracurricular':
-        return _getExtracurricularRecommendation(priority);
-      case 'leadership':
-        return _getLeadershipRecommendation(priority);
-      case 'community_service':
-        return _getCommunityServiceRecommendation(priority);
-      default:
-        return Recommendation(
-          id: 'default_rec',
-          title: 'Improve Overall Profile',
-          description:
-              'Work on improving all aspects of your scholarship profile.',
-          category: category,
-          priority: priority,
-        );
-    }
-  }
-
-  Recommendation _getAcademicRecommendation(int priority) {
-    if (priority >= 4) {
-      return Recommendation(
-        id: 'academic_high',
-        title: 'Boost Your GPA',
-        description:
-            'Focus on improving your GPA as it\'s a key factor for scholarship eligibility. Consider tutoring, study groups, or academic support services.',
-        category: 'academic',
-        priority: priority,
-        relatedContentIds: ['module_academic_improvement'],
-      );
-    } else {
-      return Recommendation(
-        id: 'academic_low',
-        title: 'Maintain Academic Excellence',
-        description:
-            'Continue your strong academic performance and consider pursuing additional academic challenges or honors programs.',
-        category: 'academic',
-        priority: priority,
-        relatedContentIds: ['module_academic_excellence'],
-      );
-    }
-  }
-
-  Recommendation _getFinancialRecommendation(int priority) {
-    // Financial need recommendations
-    return Recommendation(
-      id: 'financial_rec',
-      title: 'Document Financial Need',
-      description:
-          'Ensure you have proper documentation of your financial situation for need-based scholarships.',
-      category: 'financial',
-      priority: priority,
-      relatedContentIds: ['module_financial_documentation'],
-    );
-  }
-
-  Recommendation _getExtracurricularRecommendation(int priority) {
-    // Extracurricular activity recommendations
-    return Recommendation(
-      id: 'extracurricular_rec',
-      title: 'Enhance Extracurricular Involvement',
-      description:
-          'Join clubs or activities related to your field of study to demonstrate passion and commitment.',
-      category: 'extracurricular',
-      priority: priority,
-      relatedContentIds: ['module_extracurricular_enhancement'],
-    );
-  }
-
-  Recommendation _getLeadershipRecommendation(int priority) {
-    // Leadership recommendations
-    return Recommendation(
-      id: 'leadership_rec',
-      title: 'Develop Leadership Skills',
-      description:
-          'Seek leadership positions in campus organizations or community groups.',
-      category: 'leadership',
-      priority: priority,
-      relatedContentIds: ['module_leadership_development'],
-    );
-  }
-
-  Recommendation _getCommunityServiceRecommendation(int priority) {
-    // Community service recommendations
-    return Recommendation(
-      id: 'community_service_rec',
-      title: 'Increase Community Involvement',
-      description:
-          'Volunteer for causes that align with your interests or field of study.',
-      category: 'community_service',
-      priority: priority,
-      relatedContentIds: ['module_community_service'],
-    );
-  }
-
   Map<String, String> _identifyStrengthAreas(
       Map<String, double> categoryScores) {
-    Map<String, String> strengths = {};
+    Map<String, String> strengthAreas = {};
 
     categoryScores.forEach((category, score) {
       if (score >= 80.0) {
-        switch (category) {
-          case 'academic':
-            strengths[category] = 'Strong academic performance';
-            break;
-          case 'financial':
-            strengths[category] = 'Demonstrated financial need';
-            break;
-          case 'extracurricular':
-            strengths[category] = 'Well-rounded extracurricular profile';
-            break;
-          case 'leadership':
-            strengths[category] = 'Excellent leadership experience';
-            break;
-          case 'community_service':
-            strengths[category] = 'Significant community involvement';
-            break;
-        }
+        strengthAreas[category] = _getStrengthDescription(category);
       }
     });
 
-    return strengths;
+    return strengthAreas;
   }
 
   Map<String, String> _identifyImprovementAreas(
       Map<String, double> categoryScores) {
-    Map<String, String> improvements = {};
+    Map<String, String> improvementAreas = {};
 
     categoryScores.forEach((category, score) {
       if (score < 60.0) {
-        switch (category) {
-          case 'academic':
-            improvements[category] = 'Academic performance needs improvement';
-            break;
-          case 'financial':
-            improvements[category] =
-                'Better documentation of financial need required';
-            break;
-          case 'extracurricular':
-            improvements[category] =
-                'More extracurricular involvement recommended';
-            break;
-          case 'leadership':
-            improvements[category] = 'Develop stronger leadership experiences';
-            break;
-          case 'community_service':
-            improvements[category] = 'Increase community service participation';
-            break;
-        }
+        improvementAreas[category] = _getImprovementDescription(category);
       }
     });
 
-    return improvements;
+    return improvementAreas;
+  }
+
+  String _getStrengthDescription(String category) {
+    switch (category) {
+      case 'academic':
+        return 'Strong academic performance positions you well for merit-based scholarships.';
+      case 'financial':
+        return 'Your financial situation makes you eligible for need-based scholarships.';
+      case 'extracurricular':
+        return 'Your extracurricular involvement demonstrates well-roundedness valued by scholarship committees.';
+      case 'leadership':
+        return 'Your leadership experience is a significant asset for many scholarship applications.';
+      case 'community_service':
+        return 'Your community service demonstrates a commitment to giving back that scholarship providers value.';
+      case 'personal':
+        return 'Your personal profile and background information position you well for scholarships that value your unique experiences.';
+      default:
+        return 'This is a strength area for your profile.';
+    }
+  }
+
+  String _getImprovementDescription(String category) {
+    switch (category) {
+      case 'academic':
+        return 'Improving your academic performance will enhance your eligibility for merit-based scholarships.';
+      case 'financial':
+        return 'Better documenting your financial need will improve your chances for need-based scholarships.';
+      case 'extracurricular':
+        return 'Increasing your extracurricular involvement will make your profile more competitive.';
+      case 'leadership':
+        return 'Developing leadership skills will strengthen your scholarship applications.';
+      case 'community_service':
+        return 'Engaging in more community service will enhance your scholarship profile.';
+      case 'personal':
+        return 'Developing a more compelling personal story and clearer career goals will strengthen your applications.';
+      default:
+        return 'This is an area to improve in your profile.';
+    }
   }
 }

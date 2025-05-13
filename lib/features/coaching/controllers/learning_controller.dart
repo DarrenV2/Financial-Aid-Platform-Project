@@ -69,9 +69,24 @@ class LearningController extends GetxController {
         throw Exception('Authentication required to access learning modules');
       }
 
+      // Debug: Print recommendations and their module IDs
+      print('Loading recommendations:');
+      for (var rec in result.recommendations) {
+        print('Recommendation: ${rec.title}');
+        print('  - Category: ${rec.category}');
+        print('  - LearningModuleId: ${rec.learningModuleId}');
+        print('  - RelatedContentIds: ${rec.relatedContentIds}');
+      }
+
       // Fetch data first
       final userProgress = await _progressService.getUserProgress(userId);
       final modules = _learningService.getRecommendedModules(result);
+
+      // Debug: Print found modules
+      print('Found ${modules.length} modules:');
+      for (var module in modules) {
+        print('  - ${module.id}: ${module.title} (${module.category})');
+      }
 
       // Then update UI all at once to avoid partial updates during build
       Future.microtask(() {
@@ -119,7 +134,7 @@ class LearningController extends GetxController {
         });
       }
     } catch (e) {
-      print('Error updating module progress: $e');
+      // Silently handle errors
     }
   }
 
@@ -138,7 +153,8 @@ class LearningController extends GetxController {
         throw Exception('Authentication required to refresh progress data');
       }
 
-      print("LearningController: Refreshing user progress from Firestore");
+      // Update recommendation module IDs first if needed
+      await _progressService.updateRecommendationModuleIds(userId);
 
       // Get latest progress from Firestore
       final userProgress = await _progressService.getUserProgress(userId);
@@ -150,18 +166,14 @@ class LearningController extends GetxController {
 
         // If there's at least one assessment result, also load recommended modules
         if (userProgress.assessmentResults.isNotEmpty) {
-          print(
-              "LearningController: Found assessment results, loading recommended modules");
           // Use the most recent assessment result to load recommended modules
           final modules = _learningService
               .getRecommendedModules(userProgress.assessmentResults.last);
           recommendedModules.value = modules;
-          print(
-              "LearningController: Loaded ${modules.length} recommended modules");
         }
       });
     } catch (e) {
-      print('Error refreshing data from Firestore: $e');
+      // Silently handle errors
     }
   }
 }

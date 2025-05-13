@@ -84,37 +84,29 @@ class RecommendationCard extends StatelessWidget {
     );
   }
 
-  Color _getPriorityColor(int priority) {
+  Color _getPriorityColor(RecommendationPriority priority) {
     switch (priority) {
-      case 5:
+      case RecommendationPriority.high:
         return Colors.red;
-      case 4:
-        return Colors.deepOrange;
-      case 3:
+      case RecommendationPriority.medium:
         return Colors.orange;
-      case 2:
-        return Colors.amber;
-      case 1:
+      case RecommendationPriority.low:
         return Colors.green;
       default:
         return Colors.blue;
     }
   }
 
-  String _getPriorityLabel(int priority) {
+  String _getPriorityLabel(RecommendationPriority priority) {
     switch (priority) {
-      case 5:
+      case RecommendationPriority.high:
         return 'High Priority';
-      case 4:
-        return 'Important';
-      case 3:
+      case RecommendationPriority.medium:
         return 'Medium Priority';
-      case 2:
-        return 'Recommended';
-      case 1:
+      case RecommendationPriority.low:
         return 'Optional';
       default:
-        return 'Priority $priority';
+        return 'Priority';
     }
   }
 }

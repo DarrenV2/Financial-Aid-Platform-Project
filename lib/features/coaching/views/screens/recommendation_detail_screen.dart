@@ -319,6 +319,59 @@ class _RecommendationDetailScreenState
                   }).toList(),
                 );
               }),
+
+              const SizedBox(height: 12),
+              // Debug info
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Debug Info:',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                        color: Colors.grey[800],
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'ID: ${widget.recommendation.id}',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[800],
+                      ),
+                    ),
+                    Text(
+                      'Category: ${widget.recommendation.category ?? "null"}',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[800],
+                      ),
+                    ),
+                    Text(
+                      'Module ID: ${widget.recommendation.learningModuleId ?? "null"}',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[800],
+                      ),
+                    ),
+                    Text(
+                      'Related Content IDs: ${widget.recommendation.relatedContentIds.join(", ")}',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[800],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
             ],
           ),
         ),
@@ -326,41 +379,35 @@ class _RecommendationDetailScreenState
     );
   }
 
-  Color _getPriorityColor(int priority) {
+  Color _getPriorityColor(RecommendationPriority priority) {
     switch (priority) {
-      case 5:
+      case RecommendationPriority.high:
         return Colors.red;
-      case 4:
-        return Colors.deepOrange;
-      case 3:
+      case RecommendationPriority.medium:
         return Colors.orange;
-      case 2:
-        return Colors.amber;
-      case 1:
+      case RecommendationPriority.low:
         return Colors.green;
       default:
         return Colors.blue;
     }
   }
 
-  String _getPriorityLabel(int priority) {
+  String _getPriorityLabel(RecommendationPriority priority) {
     switch (priority) {
-      case 5:
+      case RecommendationPriority.high:
         return 'High Priority';
-      case 4:
-        return 'Important';
-      case 3:
+      case RecommendationPriority.medium:
         return 'Medium Priority';
-      case 2:
-        return 'Recommended';
-      case 1:
+      case RecommendationPriority.low:
         return 'Optional';
       default:
-        return 'Priority $priority';
+        return 'Priority';
     }
   }
 
-  Color _getCategoryColor(String category) {
+  Color _getCategoryColor(String? category) {
+    if (category == null) return Colors.grey;
+
     switch (category.toLowerCase()) {
       case 'academic':
         return Colors.blue;
@@ -374,6 +421,8 @@ class _RecommendationDetailScreenState
         return Colors.teal;
       case 'community_service':
         return Colors.red;
+      case 'personal':
+        return Colors.deepPurple;
       default:
         return Colors.grey;
     }
@@ -398,7 +447,9 @@ class _RecommendationDetailScreenState
     }
   }
 
-  String _formatCategoryName(String category) {
+  String _formatCategoryName(String? category) {
+    if (category == null) return 'General';
+
     return category
         .split('_')
         .map((word) => word[0].toUpperCase() + word.substring(1))
@@ -425,7 +476,7 @@ class _RecommendationDetailScreenState
   String _getDetailedExplanation(Recommendation recommendation) {
     // In a real app, this would fetch detailed content from a database
     // Using placeholder text for demonstration
-    switch (recommendation.category) {
+    switch (recommendation.category?.toLowerCase() ?? 'general') {
       case 'academic':
         return 'Strong academic achievements demonstrate your commitment to excellence and your ability to manage responsibilities. Scholarship committees look for students who have proven themselves capable of succeeding in challenging academic environments.';
       case 'financial':
@@ -438,6 +489,8 @@ class _RecommendationDetailScreenState
         return 'Community service demonstrates your commitment to helping others and making a positive impact. Many scholarships are specifically designed for students who show dedication to serving their communities and addressing important social issues.';
       case 'strategy':
         return 'A strategic approach to scholarship applications can significantly increase your chances of success. Being organized, thorough, and thoughtful in your applications helps you stand out in a competitive field.';
+      case 'personal':
+        return 'Your personal background and story are powerful assets in scholarship applications. Effectively communicating your unique experiences, challenges, and aspirations helps scholarship committees connect with you as an individual.';
       default:
         return 'This recommendation is designed to help you improve your scholarship eligibility and application quality. Following these steps will strengthen your overall profile and increase your chances of success.';
     }
@@ -446,7 +499,7 @@ class _RecommendationDetailScreenState
   List<String> _getActionSteps(Recommendation recommendation) {
     // In a real app, this would fetch detailed content from a database
     // Using placeholder actions for demonstration
-    switch (recommendation.category) {
+    switch (recommendation.category?.toLowerCase() ?? 'general') {
       case 'academic':
         return [
           'Review your current GPA and identify areas for improvement',
@@ -494,6 +547,14 @@ class _RecommendationDetailScreenState
           'Personalize each application to match the scholarship criteria',
           'Have multiple people review your applications before submission',
           'Follow up appropriately after submitting applications'
+        ];
+      case 'personal':
+        return [
+          'Develop a compelling personal statement that tells your unique story',
+          'Identify key experiences that have shaped your goals and values',
+          'Gather feedback on your personal essays from mentors and advisors',
+          'Practice articulating your background and aspirations in interviews',
+          'Connect your personal experiences to the scholarship\'s mission and values'
         ];
       default:
         return [

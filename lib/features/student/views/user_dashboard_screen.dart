@@ -8,6 +8,7 @@ import 'tabs/profile_tab.dart';
 import 'tabs/coaching_tab.dart';
 import 'package:financial_aid_project/routes/routes.dart';
 import 'package:financial_aid_project/utils/constants/colors.dart';
+import 'package:financial_aid_project/shared_components/gemini_chatbot.dart';
 
 class UserDashboardScreen extends StatefulWidget {
   const UserDashboardScreen({super.key});
@@ -67,21 +68,27 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Obx(() {
-        // Return the active tab
-        switch (_dashboardController.activeTab.value) {
-          case 'scholarships':
-            return const ScholarshipsTab();
-          case 'applications':
-            return const ApplicationsTab();
-          case 'profile':
-            return const ProfileTab();
-          case 'coaching':
-            return const CoachingTab();
-          default:
-            return const ScholarshipsTab();
-        }
-      }),
+      body: Stack(
+        children: [
+          Obx(() {
+            // Return the active tab
+            switch (_dashboardController.activeTab.value) {
+              case 'scholarships':
+                return const ScholarshipsTab();
+              case 'applications':
+                return const ApplicationsTab();
+              case 'profile':
+                return const ProfileTab();
+              case 'coaching':
+                return const CoachingTab();
+              default:
+                return const ScholarshipsTab();
+            }
+          }),
+          // Add the chatbot overlay
+          const GeminiChatbot(),
+        ],
+      ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           boxShadow: [

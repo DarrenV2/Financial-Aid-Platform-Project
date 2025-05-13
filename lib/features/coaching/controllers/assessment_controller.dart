@@ -17,11 +17,6 @@ class AssessmentController extends GetxController {
     resetAssessment();
   }
 
-  void initPostAssessment() {
-    questions.value = _assessmentService.getPostAssessmentQuestions();
-    resetAssessment();
-  }
-
   void resetAssessment() {
     currentQuestionIndex.value = 0;
     answers.clear();

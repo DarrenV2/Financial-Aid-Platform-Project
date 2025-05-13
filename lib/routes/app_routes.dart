@@ -105,11 +105,7 @@ class TAppRoute {
 
     GetPage(
         name: TRoutes.coachingAssessment,
-        page: () {
-          final args = Get.arguments as Map<String, dynamic>;
-          final isPreAssessment = args['isPreAssessment'] as bool;
-          return AssessmentScreen(isPreAssessment: isPreAssessment);
-        },
+        page: () => const AssessmentScreen(),
         middlewares: [TRouteMiddleware()]),
 
     GetPage(
@@ -117,11 +113,7 @@ class TAppRoute {
         page: () {
           final args = Get.arguments as Map<String, dynamic>;
           final result = args['result'];
-          final isPostAssessment = args['isPostAssessment'] as bool? ?? false;
-          return AssessmentResultScreen(
-            result: result,
-            isPostAssessment: isPostAssessment,
-          );
+          return AssessmentResultScreen(result: result);
         },
         middlewares: [TRouteMiddleware()]),
 

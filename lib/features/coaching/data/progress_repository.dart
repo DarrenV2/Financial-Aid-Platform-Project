@@ -19,13 +19,11 @@ class FirestoreProgressRepository implements IProgressRepository {
   @override
   Future<UserProgress> getUserProgress(String userId) async {
     try {
-      print("FirestoreProgressRepository: Getting progress for user $userId");
       final doc =
           await _firestore.collection('user_progress').doc(userId).get();
 
       if (doc.exists && doc.data() != null) {
         final data = doc.data()!;
-        print("FirestoreProgressRepository: Found user progress document");
 
         // Convert moduleProgress from map
         Map<String, double> moduleProgress = {};
@@ -45,8 +43,6 @@ class FirestoreProgressRepository implements IProgressRepository {
         // Convert assessmentResults from list of maps
         List<AssessmentResult> assessmentResults = [];
         if (data['assessmentResults'] != null) {
-          print(
-              "FirestoreProgressRepository: Found assessment results: ${(data['assessmentResults'] as List).length}");
           for (var resultMap in data['assessmentResults'] as List) {
             try {
               final Map<String, dynamic> typedMap =
@@ -74,8 +70,6 @@ class FirestoreProgressRepository implements IProgressRepository {
               // Try loading full recommendation data first
               if (typedMap['recommendations'] != null &&
                   (typedMap['recommendations'] as List).isNotEmpty) {
-                print(
-                    "FirestoreProgressRepository: Found full recommendations data");
                 final List<dynamic> recsData =
                     typedMap['recommendations'] as List;
                 for (var recData in recsData) {
@@ -94,19 +88,18 @@ class FirestoreProgressRepository implements IProgressRepository {
                         title: recMap['title'].toString(),
                         description: recMap['description'].toString(),
                         category: recMap['category'].toString(),
-                        priority: (recMap['priority'] as num).toInt(),
+                        priority: _intToPriorityEnum(
+                            (recMap['priority'] as num).toInt()),
                         relatedContentIds: relatedContentIds,
                       ));
                     } catch (e) {
-                      print("Error parsing recommendation: $e");
+                      // Silently handle errors
                     }
                   }
                 }
               }
               // Fall back to ID-based recommendations if full data not available
               else if (typedMap['recommendationIds'] != null) {
-                print(
-                    "FirestoreProgressRepository: Using recommendationIds fallback");
                 final List<dynamic> recIds =
                     typedMap['recommendationIds'] as List;
                 for (var id in recIds) {
@@ -116,14 +109,17 @@ class FirestoreProgressRepository implements IProgressRepository {
 
                   // Map recommendation IDs to specific module IDs based on category
                   if (recId.contains('academic')) {
-                    relatedContentIds.add('module_academic_profile');
+                    relatedContentIds.add('module_academic_improvement');
                     relatedContentIds.add('module_essay_writing');
                   } else if (recId.contains('financial')) {
-                    relatedContentIds.add('module_financial_aid');
-                    relatedContentIds.add('module_scholarships_101');
+                    relatedContentIds.add('module_essay_writing');
+                    relatedContentIds.add('module_application_strategy');
                   } else if (recId.contains('leadership')) {
-                    relatedContentIds.add('module_leadership');
+                    relatedContentIds.add('module_leadership_development');
                     relatedContentIds.add('module_community_service');
+                  } else if (recId.contains('personal')) {
+                    relatedContentIds.add('module_personal_statement');
+                    relatedContentIds.add('module_personal_branding');
                   }
 
                   // Create basic recommendations
@@ -135,8 +131,12 @@ class FirestoreProgressRepository implements IProgressRepository {
                         ? 'academic'
                         : recId.contains('financial')
                             ? 'financial'
-                            : 'leadership',
-                    priority: 3, // Default medium priority
+                            : recId.contains('leadership')
+                                ? 'leadership'
+                                : recId.contains('personal')
+                                    ? 'personal'
+                                    : 'general',
+                    priority: RecommendationPriority.medium,
                     relatedContentIds: relatedContentIds,
                   ));
                 }
@@ -179,11 +179,8 @@ class FirestoreProgressRepository implements IProgressRepository {
                 recommendations: recommendations,
                 eligibility: eligibility,
               ));
-
-              print(
-                  "FirestoreProgressRepository: Loaded assessment result with score $overallScore and ${recommendations.length} recommendations");
             } catch (e) {
-              print("Error parsing assessment result: $e");
+              // Silently handle errors
             }
           }
         }
@@ -197,7 +194,6 @@ class FirestoreProgressRepository implements IProgressRepository {
               (data['lastUpdated'] as Timestamp?)?.toDate() ?? DateTime.now(),
         );
       } else {
-        print("FirestoreProgressRepository: No user progress document found");
         // Return empty progress if no document exists
         return UserProgress(
           userId: userId,
@@ -208,7 +204,6 @@ class FirestoreProgressRepository implements IProgressRepository {
         );
       }
     } catch (e) {
-      print('Error getting user progress from Firestore: $e');
       // Return empty progress on error
       return UserProgress(
         userId: userId,
@@ -244,7 +239,6 @@ class FirestoreProgressRepository implements IProgressRepository {
         });
       }
     } catch (e) {
-      print('Error updating module progress in Firestore: $e');
       rethrow;
     }
   }
@@ -272,7 +266,6 @@ class FirestoreProgressRepository implements IProgressRepository {
         });
       }
     } catch (e) {
-      print('Error marking module as completed in Firestore: $e');
       rethrow;
     }
   }
@@ -281,9 +274,6 @@ class FirestoreProgressRepository implements IProgressRepository {
   Future<void> saveAssessmentResult(
       String userId, AssessmentResult result) async {
     try {
-      print(
-          "FirestoreProgressRepository: Saving assessment result for user $userId with score ${result.overallScore}");
-
       // Convert recommendations to a format suitable for Firestore
       List<Map<String, dynamic>> recommendationsData = [];
       for (var rec in result.recommendations) {
@@ -292,7 +282,7 @@ class FirestoreProgressRepository implements IProgressRepository {
           'title': rec.title,
           'description': rec.description,
           'category': rec.category,
-          'priority': rec.priority,
+          'priority': rec.priority.value,
           'relatedContentIds': rec.relatedContentIds,
         });
       }
@@ -321,16 +311,12 @@ class FirestoreProgressRepository implements IProgressRepository {
           await _firestore.collection('user_progress').doc(userId).get();
 
       if (userDoc.exists) {
-        print(
-            "FirestoreProgressRepository: Updating existing user progress document");
         // Update existing document with arrayUnion for assessment results
         await _firestore.collection('user_progress').doc(userId).update({
           'assessmentResults': FieldValue.arrayUnion([resultMap]),
           'lastUpdated': FieldValue.serverTimestamp(),
         });
       } else {
-        print(
-            "FirestoreProgressRepository: Creating new user progress document");
         // Create new document with initial array for assessment results
         await _firestore.collection('user_progress').doc(userId).set({
           'assessmentResults': [resultMap],
@@ -339,12 +325,22 @@ class FirestoreProgressRepository implements IProgressRepository {
           'lastUpdated': FieldValue.serverTimestamp(),
         });
       }
-
-      print(
-          "FirestoreProgressRepository: Successfully saved assessment result");
     } catch (e) {
-      print('Error saving assessment result in Firestore: $e');
-      rethrow;
+      // Silently handle errors
+    }
+  }
+
+  RecommendationPriority _intToPriorityEnum(int value) {
+    switch (value) {
+      case 5:
+        return RecommendationPriority.high;
+      case 3:
+        return RecommendationPriority.medium;
+      case 1:
+        return RecommendationPriority.low;
+      default:
+        // For any other value, map to medium by default
+        return RecommendationPriority.medium;
     }
   }
 }

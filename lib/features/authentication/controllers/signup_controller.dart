@@ -36,13 +36,22 @@ class SignupController extends GetxController {
       final isConnected = await NetworkManager.instance.isConnected();
       if (!isConnected) {
         TFullScreenLoader.stopLoading();
+        TLoaders.errorSnackBar(
+            title: 'No Internet Connection',
+            message: 'Please check your internet connection and try again.');
         return;
       }
+
+      // Verify all fields
+      final trimmedEmail = email.text.trim();
+
+      // We'll skip the Firestore email check since it's causing permission issues
+      // Firebase Auth will handle duplicate email checking during registration
 
       // Register user using Email & Password Authentication
       final userCredential =
           await AuthenticationRepository.instance.registerWithEmailAndPassword(
-        email.text.trim(),
+        trimmedEmail,
         password.text.trim(),
       );
 
@@ -52,8 +61,8 @@ class SignupController extends GetxController {
           id: userCredential.user!.uid,
           firstName: firstName.text.trim(),
           lastName: lastName.text.trim(),
-          userName: '${firstName.text.trim()}${lastName.text.trim()}',
-          email: email.text.trim(),
+          userName: '${firstName.text.trim()}_${lastName.text.trim()}',
+          email: trimmedEmail,
           role: AppRole.user,
           createdAt: DateTime.now(),
         ),
@@ -71,7 +80,9 @@ class SignupController extends GetxController {
       Get.offAllNamed('/login');
     } catch (e) {
       TFullScreenLoader.stopLoading();
-      TLoaders.errorSnackBar(title: 'Oh Snap', message: e.toString());
+      // Log the error without print statements for production
+      TLoaders.errorSnackBar(
+          title: 'Registration Failed', message: e.toString());
     }
   }
 

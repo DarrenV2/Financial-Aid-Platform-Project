@@ -97,10 +97,8 @@ class _ModuleDetailScreenState extends State<ModuleDetailScreen> {
     quizScore.value = correctAnswers;
     quizSubmitted.value = true;
 
-    // Mark module as completed if quiz is submitted
-    if (widget.module.title.contains("Academic Performance")) {
-      _completeModule();
-    }
+    // Mark module as completed if quiz is submitted - allow for all modules
+    _completeModule();
   }
 
   // Helper method to complete the module
@@ -254,9 +252,7 @@ class _ModuleDetailScreenState extends State<ModuleDetailScreen> {
 
                             if (!hasQuiz) {
                               await _completeModule();
-                            } else if (quizSubmitted.value &&
-                                widget.module.title
-                                    .contains("Academic Performance")) {
+                            } else if (quizSubmitted.value) {
                               await _completeModule();
                             } else {
                               // Prompt to complete the quiz first

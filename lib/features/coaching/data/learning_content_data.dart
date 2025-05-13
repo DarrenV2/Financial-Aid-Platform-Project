@@ -233,28 +233,21 @@ Online GPA calculators can help you:
       ],
       assessmentQuestions: [
         Question(
-          id: 'post_academic_resources',
-          text: 'Which campus resources have you used to improve your academic performance?',
-          type: QuestionType.multipleChoice,
-          options: [
-            Option(id: 'tutoring', text: 'Tutoring Center', value: 'tutoring'),
-            Option(id: 'writing', text: 'Writing Center', value: 'writing'),
-            Option(id: 'professor', text: 'Professor Office Hours', value: 'professor'),
-            Option(id: 'study_group', text: 'Study Groups', value: 'study_group'),
-            Option(id: 'none', text: 'None of the above', value: 'none'),
-          ],
+          id: 'academic_goals',
+          text: 'What academic goals do you want to achieve?',
+          type: QuestionType.text,
           category: 'academic',
         ),
         Question(
-          id: 'post_study_time',
-          text: 'How many hours per week do you now dedicate to studying outside of class?',
+          id: 'study_habits',
+          text: 'How would you rate your current study habits?',
           type: QuestionType.singleChoice,
           options: [
-            Option(id: 'less_5', text: 'Less than 5 hours', value: 'less_5'),
-            Option(id: '5_10', text: '5-10 hours', value: '5_10'),
-            Option(id: '10_15', text: '10-15 hours', value: '10_15'),
-            Option(id: '15_20', text: '15-20 hours', value: '15_20'),
-            Option(id: 'more_20', text: 'More than 20 hours', value: 'more_20'),
+            Option(id: 'excellent', text: 'Excellent', value: 'excellent'),
+            Option(id: 'good', text: 'Good', value: 'good'),
+            Option(id: 'average', text: 'Average', value: 'average'),
+            Option(id: 'poor', text: 'Poor', value: 'poor'),
+            Option(id: 'very_poor', text: 'Very Poor', value: 'very_poor'),
           ],
           category: 'academic',
         ),
@@ -265,7 +258,8 @@ Online GPA calculators can help you:
     LearningModule(
       id: 'module_leadership_development',
       title: 'Developing Leadership Skills',
-      description: 'Strategies to enhance your leadership abilities for scholarship applications.',
+      description:
+          'Strategies to enhance your leadership abilities for scholarship applications.',
       category: 'leadership',
       difficulty: 3,
       contents: [
@@ -351,7 +345,11 @@ There are numerous ways to develop leadership skills on campus. The key is findi
 **Action Item**: Identify at least three leadership opportunities that interest you and align with your skills and goals.
 ''',
           ordinalPosition: 2,
-          tags: ['leadership opportunities', 'campus involvement', 'student organizations'],
+          tags: [
+            'leadership opportunities',
+            'campus involvement',
+            'student organizations'
+          ],
         ),
         LearningContent(
           id: 'leadership_skills',
@@ -405,7 +403,12 @@ Effective leadership requires specific skills that can be learned and practiced.
 **Competitive Advantage**: Many students hold leadership positions but don't actively work on developing specific leadership skills. By intentionally building these capabilities, you'll stand out in scholarship applications.
 ''',
           ordinalPosition: 3,
-          tags: ['leadership skills', 'communication', 'organization', 'people skills'],
+          tags: [
+            'leadership skills',
+            'communication',
+            'organization',
+            'people skills'
+          ],
         ),
         LearningContent(
           id: 'leadership_documentation',
@@ -537,21 +540,33 @@ Keep this completed exercise as a personal roadmap, and revisit it quarterly to 
       ],
       assessmentQuestions: [
         Question(
-          id: 'post_leadership_roles',
-          text: 'What leadership positions have you held or initiatives have you led since beginning the program?',
-          type: QuestionType.text,
+          id: 'leadership_experience',
+          text: 'Do you have any leadership experience?',
+          type: QuestionType.boolean,
           category: 'leadership',
         ),
         Question(
-          id: 'post_leadership_skills',
-          text: 'Which leadership skills have you most improved?',
+          id: 'leadership_interests',
+          text: 'What leadership skills are you most interested in developing?',
           type: QuestionType.multipleChoice,
           options: [
-            Option(id: 'communication', text: 'Communication', value: 'communication'),
-            Option(id: 'organization', text: 'Organization', value: 'organization'),
+            Option(
+                id: 'communication',
+                text: 'Communication',
+                value: 'communication'),
+            Option(
+                id: 'organization',
+                text: 'Organization',
+                value: 'organization'),
             Option(id: 'delegation', text: 'Delegation', value: 'delegation'),
-            Option(id: 'conflict_resolution', text: 'Conflict Resolution', value: 'conflict_resolution'),
-            Option(id: 'strategic_thinking', text: 'Strategic Thinking', value: 'strategic_thinking'),
+            Option(
+                id: 'conflict_resolution',
+                text: 'Conflict Resolution',
+                value: 'conflict_resolution'),
+            Option(
+                id: 'strategic_thinking',
+                text: 'Strategic Thinking',
+                value: 'strategic_thinking'),
           ],
           category: 'leadership',
         ),
@@ -562,7 +577,8 @@ Keep this completed exercise as a personal roadmap, and revisit it quarterly to 
     LearningModule(
       id: 'module_essay_writing',
       title: 'Mastering Scholarship Essays',
-      description: 'Learn to write compelling scholarship essays that stand out.',
+      description:
+          'Learn to write compelling scholarship essays that stand out.',
       category: 'academic',
       difficulty: 4,
       contents: [
@@ -895,28 +911,44 @@ Use this comprehensive checklist before submitting any scholarship essay to ensu
       ],
       assessmentQuestions: [
         Question(
-          id: 'post_essay_confidence',
-          text: 'How confident do you feel about your scholarship essay writing abilities now?',
+          id: 'writing_confidence',
+          text: 'How confident do you feel about your essay writing abilities?',
           type: QuestionType.singleChoice,
           options: [
-            Option(id: 'very_confident', text: 'Very confident', value: 'very_confident'),
+            Option(
+                id: 'very_confident',
+                text: 'Very confident',
+                value: 'very_confident'),
             Option(id: 'confident', text: 'Confident', value: 'confident'),
             Option(id: 'neutral', text: 'Neutral', value: 'neutral'),
-            Option(id: 'not_confident', text: 'Not confident', value: 'not_confident'),
-            Option(id: 'very_not_confident', text: 'Not at all confident', value: 'very_not_confident'),
+            Option(
+                id: 'not_confident',
+                text: 'Not confident',
+                value: 'not_confident'),
+            Option(
+                id: 'very_not_confident',
+                text: 'Not at all confident',
+                value: 'very_not_confident'),
           ],
           category: 'academic',
         ),
         Question(
-          id: 'post_essay_feedback',
-          text: 'Who do you now get feedback from before submitting scholarship essays?',
+          id: 'essay_support',
+          text: 'Who currently helps you review your essays?',
           type: QuestionType.multipleChoice,
           options: [
-            Option(id: 'professors', text: 'Professors/Teachers', value: 'professors'),
-            Option(id: 'writing_center', text: 'Writing Center Staff', value: 'writing_center'),
+            Option(
+                id: 'professors',
+                text: 'Professors/Teachers',
+                value: 'professors'),
+            Option(
+                id: 'writing_center',
+                text: 'Writing Center Staff',
+                value: 'writing_center'),
             Option(id: 'family', text: 'Family Members', value: 'family'),
             Option(id: 'peers', text: 'Peers/Classmates', value: 'peers'),
-            Option(id: 'nobody', text: 'I don\'t get feedback', value: 'nobody'),
+            Option(
+                id: 'nobody', text: 'I don\'t get feedback', value: 'nobody'),
           ],
           category: 'academic',
         ),
@@ -927,7 +959,8 @@ Use this comprehensive checklist before submitting any scholarship essay to ensu
     LearningModule(
       id: 'module_community_service',
       title: 'Maximizing Community Service Impact',
-      description: 'Learn how to make your volunteer work more meaningful for both communities and scholarship applications.',
+      description:
+          'Learn how to make your volunteer work more meaningful for both communities and scholarship applications.',
       category: 'community_service',
       difficulty: 2,
       contents: [
@@ -1025,7 +1058,11 @@ If existing opportunities don't match your interests:
 **Action Item**: Identify 3-5 service opportunities that align with your interests and values, then research their specific volunteer requirements.
 ''',
           ordinalPosition: 2,
-          tags: ['volunteer opportunities', 'service projects', 'finding service'],
+          tags: [
+            'volunteer opportunities',
+            'service projects',
+            'finding service'
+          ],
         ),
         LearningContent(
           id: 'community_impact',
@@ -1075,7 +1112,11 @@ Track both quantitative and qualitative measures:
 **Competitive Advantage**: Many students simply accumulate service hours, but scholarship committees prefer applicants who can demonstrate meaningful impact and personal transformation through their service experiences.
 ''',
           ordinalPosition: 3,
-          tags: ['service impact', 'volunteer effectiveness', 'community engagement'],
+          tags: [
+            'service impact',
+            'volunteer effectiveness',
+            'community engagement'
+          ],
         ),
         LearningContent(
           id: 'community_reflection',
@@ -1208,20 +1249,39 @@ Create a semester-by-semester plan outlining:
 Keep this completed exercise as a personal roadmap for your service journey, updating it each semester as you gain new experiences and insights.
 ''',
           ordinalPosition: 5,
-          tags: ['service planning', 'impact assessment', 'strategic volunteering'],
+          tags: [
+            'service planning',
+            'impact assessment',
+            'strategic volunteering'
+          ],
         ),
       ],
       assessmentQuestions: [
         Question(
-          id: 'post_service_hours',
-          text: 'How many hours of community service have you completed in the past three months?',
-          type: QuestionType.number,
+          id: 'service_experience',
+          text: 'Do you have any community service experience?',
+          type: QuestionType.boolean,
           category: 'community_service',
         ),
         Question(
-          id: 'post_service_leadership',
-          text: 'Have you taken on any leadership roles in your community service activities?',
-          type: QuestionType.text,
+          id: 'service_interests',
+          text: 'What types of community service are you most interested in?',
+          type: QuestionType.multipleChoice,
+          options: [
+            Option(
+                id: 'education',
+                text: 'Education/Tutoring',
+                value: 'education'),
+            Option(
+                id: 'environment', text: 'Environmental', value: 'environment'),
+            Option(id: 'healthcare', text: 'Healthcare', value: 'healthcare'),
+            Option(id: 'elderly', text: 'Elderly Care', value: 'elderly'),
+            Option(
+                id: 'food_security',
+                text: 'Food Security',
+                value: 'food_security'),
+            Option(id: 'other', text: 'Other', value: 'other'),
+          ],
           category: 'community_service',
         ),
       ],
@@ -1231,7 +1291,8 @@ Keep this completed exercise as a personal roadmap for your service journey, upd
     LearningModule(
       id: 'module_application_strategy',
       title: 'Strategic Scholarship Application Planning',
-      description: 'Develop a systematic approach to identifying, preparing, and submitting scholarship applications.',
+      description:
+          'Develop a systematic approach to identifying, preparing, and submitting scholarship applications.',
       category: 'strategy',
       difficulty: 3,
       contents: [
@@ -1270,7 +1331,11 @@ Applying for scholarships requires more than just completing forms—it demands 
 In the following sections, we'll explore each of these phases in detail, providing you with a comprehensive system for maximizing your scholarship success.
 ''',
           ordinalPosition: 1,
-          tags: ['application strategy', 'scholarship planning', 'introduction'],
+          tags: [
+            'application strategy',
+            'scholarship planning',
+            'introduction'
+          ],
         ),
         LearningContent(
           id: 'strategy_research',
@@ -1329,7 +1394,11 @@ For each potential opportunity, assess:
 **Action Item**: Create a personal scholarship database with at least 10-15 opportunities that match your profile, recording key details for each.
 ''',
           ordinalPosition: 2,
-          tags: ['scholarship search', 'opportunity evaluation', 'research strategies'],
+          tags: [
+            'scholarship search',
+            'opportunity evaluation',
+            'research strategies'
+          ],
         ),
         LearningContent(
           id: 'strategy_organization',
@@ -1391,15 +1460,42 @@ Effective organization is crucial for managing multiple applications while maint
 ### Essential Documents to Keep Ready
 * Official transcripts (digital and physical copies)
 * Updated resume/CV in multiple formats
-* Standard recommendation letters (when permitted)
-* Portfolio of your best writing samples
-* Personal statement templates
-* Financial documentation (for need-based scholarships)
+* Standardized test scores
+* Financial documents (for need-based scholarships)
+* Portfolio of achievements (certificates, awards, publications)
 
-**Competitive Advantage**: While many students approach applications haphazardly, an organized system allows you to complete more applications with higher quality and less stress.
+### Essay Collection
+* Personal background statement
+* Academic and career goals statement
+* Financial need statement
+* Leadership philosophy and experiences
+* Community service impact reflection
+* Field-specific passion/interest essay
+
+### Recommendation Resources
+* List of potential recommenders with contact information
+* Recommendation request template emails
+* Summary sheet of your achievements for recommenders
+* Sample recommendation letters (when available)
+* Tracking system for recommendation requests and receipts
+
+## 4. Continuous Improvement Process
+
+After each application cycle:
+* Review successful and unsuccessful applications
+* Identify patterns in results
+* Collect and incorporate feedback
+* Refine strategy for next cycle
+* Update all core materials
+
+**Competitive Advantage**: While most students approach each scholarship individually, using a systematic template allows you to scale your efforts efficiently while maintaining high quality.
 ''',
           ordinalPosition: 3,
-          tags: ['scholarship organization', 'application tracking', 'time management'],
+          tags: [
+            'scholarship organization',
+            'application tracking',
+            'time management'
+          ],
         ),
         LearningContent(
           id: 'strategy_submission',
@@ -1466,7 +1562,11 @@ The final phase of application preparation and submission often determines succe
 **Pro Tip**: Create a submission routine that you follow for every application. This reduces errors and ensures consistency across all your applications.
 ''',
           ordinalPosition: 4,
-          tags: ['application submission', 'quality control', 'submission process'],
+          tags: [
+            'application submission',
+            'quality control',
+            'submission process'
+          ],
         ),
         LearningContent(
           id: 'strategy_template',
@@ -1563,21 +1663,704 @@ After each application cycle:
 **Competitive Advantage**: While most students approach each scholarship individually, using a systematic template allows you to scale your efforts efficiently while maintaining high quality.
 ''',
           ordinalPosition: 5,
-          tags: ['application template', 'planning tool', 'organization system'],
+          tags: [
+            'application template',
+            'planning tool',
+            'organization system'
+          ],
         ),
       ],
       assessmentQuestions: [
         Question(
-          id: 'post_tracking_system',
-          text: 'Have you created a system for tracking scholarship applications?',
+          id: 'tracking_system',
+          text: 'Do you have a system for tracking scholarship applications?',
           type: QuestionType.boolean,
           category: 'strategy',
         ),
         Question(
-          id: 'post_applications_submitted',
-          text: 'How many scholarship applications have you submitted since beginning the program?',
+          id: 'applications_planned',
+          text:
+              'How many scholarship applications do you plan to submit this year?',
           type: QuestionType.number,
           category: 'strategy',
+        ),
+      ],
+    ),
+
+    // Personal Statement Module
+    LearningModule(
+      id: 'module_personal_statement',
+      title: 'Crafting Your Personal Statement',
+      description:
+          'Learn to write a compelling personal statement that showcases your unique qualities and experiences.',
+      category: 'personal',
+      difficulty: 3,
+      contents: [
+        LearningContent(
+          id: 'personal_statement_intro',
+          title: 'Understanding Personal Statements',
+          type: ContentType.text,
+          content: '''
+# Understanding Personal Statements
+
+A personal statement is your opportunity to tell your story beyond grades and test scores. It's where scholarship committees get to know you as a person.
+
+## Why Personal Statements Matter
+
+* **Differentiation**: Sets you apart from applicants with similar qualifications
+* **Personal Connection**: Essays humanize your application beyond numbers and achievements
+* **Values Alignment**: Shows how your goals align with the scholarship's mission
+* **Character Insight**: Reveals your values, motivations, and personality
+
+## Common Personal Statement Types
+
+* **General Background**: Broad overview of your journey and aspirations
+* **Specific Prompt**: Targeted response to a particular question
+* **Personal Background**: Describing your life experiences and challenges
+* **Goals Statement**: Focusing on your educational and career objectives
+* **Why This Scholarship**: Explaining your fit with a specific opportunity
+
+In this module, you'll learn how to craft powerful personal statements that highlight your unique qualities and experiences in ways that resonate with scholarship committees.
+''',
+          ordinalPosition: 1,
+          tags: ['personal statement', 'introduction', 'scholarship essays'],
+        ),
+        LearningContent(
+          id: 'personal_statement_elements',
+          title: 'Key Elements of Effective Personal Statements',
+          type: ContentType.text,
+          content: '''
+# Key Elements of Effective Personal Statements
+
+Powerful personal statements share common characteristics that make them compelling to scholarship committees.
+
+## Essential Components
+
+### 1. Engaging Opening
+* Begin with a hook that captures attention
+* Consider a relevant anecdote, question, or surprising fact
+* Make the reader want to continue reading
+
+### 2. Clear Narrative Structure
+* Organize your thoughts logically
+* Create a coherent flow from beginning to middle to end
+* Connect your past experiences to present abilities and future goals
+
+### 3. Specific Examples
+* Use concrete details rather than vague generalizations
+* Describe situations that demonstrate your qualities
+* Show rather than tells through descriptive language
+
+### 4. Authentic Voice
+* Write in your own natural style
+* Avoid overly formal language that doesn't sound like you
+* Let your personality and character shine through
+
+### 5. Reflection and Insight
+* Demonstrate self-awareness and personal growth
+* Explain what you've learned from your experiences
+* Show how challenges have shaped your perspective
+
+### 6. Connection to Goals
+* Link your past experiences to your educational path
+* Explain how the scholarship supports your aspirations
+* Demonstrate clarity about your future direction
+
+### 7. Strong Conclusion
+* End with a memorable final thought
+* Reinforce your main message
+* Leave the reader with a positive impression
+
+Remember that scholarship committees read hundreds of essays. Your goal is to create a personal statement that is authentic, memorable, and persuasive.
+''',
+          ordinalPosition: 2,
+          tags: ['personal statement', 'writing techniques', 'essay structure'],
+        ),
+        LearningContent(
+          id: 'personal_statement_writing',
+          title: 'Writing Your Personal Statement',
+          type: ContentType.text,
+          content: '''
+# Writing Your Personal Statement: A Step-by-Step Guide
+
+Follow this process to develop a compelling personal statement that showcases your unique qualities and experiences.
+
+## 1. Preparation
+
+### Self-Reflection
+Before writing, take time to reflect on:
+* Key experiences that have shaped you
+* Challenges you've overcome
+* Values that guide your decisions
+* Goals and the motivation behind them
+* Qualities that make you unique
+
+### Research
+* Read the scholarship provider's mission and values
+* Understand what qualities they're looking for
+* Study sample essays (but never copy them)
+* Note the evaluation criteria if available
+
+## 2. Planning Your Statement
+
+### Choose Your Focus
+Select 1-3 main themes or qualities to highlight, such as:
+* Leadership
+* Perseverance
+* Innovation
+* Community service
+* Academic passion
+
+### Create an Outline
+* Introduction: Engaging hook and thesis
+* Body paragraphs: Each illustrating a key quality with specific examples
+* Conclusion: Synthesis and forward-looking statement
+
+## 3. Writing the Draft
+
+### Introduction Strategies
+* Start with a compelling story
+* Open with a meaningful quote (use sparingly)
+* Begin with a thought-provoking question
+* Present an interesting statistic or fact
+
+### Body Paragraph Structure
+* Topic sentence introducing the quality/theme
+* Specific example demonstrating this quality
+* Details that bring the example to life
+* Reflection on what you learned or how you grew
+* Connection to your educational/career goals
+
+### Effective Storytelling Techniques
+* Use sensory details to create vivid scenes
+* Include dialogue for key conversations
+* Show real personalities through dialogue and actions
+* Create emotional connection through authentic emotion
+
+### Conclusion Approaches
+* Circle back to your opening (if appropriate)
+* Summarize key themes without merely repeating
+* Look forward to how you'll use the scholarship
+* End with a memorable final thought
+
+## 4. Revision
+
+* Let your draft rest for at least a day
+* Read aloud to catch awkward phrasing
+* Check for clear transitions between paragraphs
+* Ensure every sentence contributes to your main themes
+* Remove clichés and overly general statements
+* Replace passive voice with active constructions
+* Verify that your authentic voice comes through
+
+Follow this process, and you'll develop a personal statement that effectively communicates your unique qualities and readiness for scholarship support.
+''',
+          ordinalPosition: 3,
+          tags: ['personal statement', 'writing process', 'scholarship essays'],
+        ),
+        LearningContent(
+          id: 'personal_statement_examples',
+          title: 'Personal Statement Examples and Analysis',
+          type: ContentType.text,
+          content: '''
+# Personal Statement Examples and Analysis
+
+Studying effective examples can help you understand what makes a personal statement successful. Below are sample excerpts with analysis of their strengths.
+
+## Example 1: Narrative about personal development
+
+> "The rhythmic beeping of hospital monitors became the soundtrack of my sophomore year when my mother was diagnosed with Stage 3 breast cancer. As the oldest child, I suddenly found myself juggling school assignments between hospital visits and helping care for my younger siblings. This experience could have derailed my education, but instead, it taught me resilience and time management skills I never knew I possessed. I created a detailed schedule that allowed me to maintain my 3.8 GPA while spending evenings at the hospital, often completing calculus homework under the glow of medical equipment. My mother's courage during treatment inspired me to approach challenges head-on, a mindset I now apply to everything from complex research projects to community leadership roles."
+
+**Analysis:**
+* Opens with vivid sensory details that immediately engage the reader
+* Demonstrates resilience and time management through specific challenges
+* Shows rather than tells about personal qualities
+* Connects personal hardship to academic performance
+* Illustrates growth and skills development through adversity
+
+## Example 2: Academic passion and goals
+
+> "When I discovered marine biology in a high school elective class, I didn't just find a subject I enjoyed—I found my calling. Growing up in a coastal community, I had always been fascinated by the ocean, but learning about coral reef ecosystems transformed my casual interest into a passionate commitment. After organizing a school club that conducted monthly beach clean-ups, I designed an independent research project to study microplastic pollution in local waterways. The results were concerning enough that I presented my findings to our city council, which subsequently implemented stricter regulations on single-use plastics. This experience solidified my desire to pursue a career in environmental science, where I can continue developing research that translates into tangible policy change."
+
+**Analysis:**
+* Shows the genesis and development of an academic interest
+* Demonstrates initiative through specific projects
+* Illustrates impact beyond personal achievement
+* Connects past experiences to future goals
+* Shows values and commitment to environmental issues
+
+## Example 3: Overcoming challenges
+
+> "Learning to read was my first real battle. Letters jumbled before my eyes, and words that seemed simple to my classmates were bewildering puzzles to me. My dyslexia diagnosis in third grade finally explained the struggle, but the real journey was just beginning. Working with specialists after school while my friends headed to the playground taught me that progress often requires sacrifice. Each new reading strategy became a tool in my arsenal, and by sixth grade, I had improved from a below-basic reading level to grade-level proficiency. This experience instilled in me a problem-solving mentality: identify the challenge, seek expert guidance, develop strategies, and persist until successful. This approach has served me well beyond academics, particularly in my work establishing a peer tutoring program for students with learning differences at my high school."
+
+**Analysis:**
+* Presents a significant challenge in a relatable way
+* Shows persistence and growth through specific milestones
+* Demonstrates how overcoming one challenge created transferable skills
+* Connects personal struggle to helping others with similar challenges
+* Reveals character through the description of the journey
+
+When writing your personal statement, aim to incorporate the strengths demonstrated in these examples while telling your unique story.
+''',
+          ordinalPosition: 4,
+          tags: ['personal statement', 'examples', 'analysis'],
+        ),
+        LearningContent(
+          id: 'personal_statement_checklist',
+          title: 'Personal Statement Review Checklist',
+          type: ContentType.checklist,
+          content: '''
+- [ ] The opening paragraph captures attention and sets the tone
+- [ ] Main themes or qualities are clearly demonstrated through specific examples
+- [ ] The statement has a clear narrative arc or logical structure
+- [ ] Each paragraph has a clear purpose that supports the overall message
+- [ ] Specific, vivid details bring experiences and achievements to life
+- [ ] The statement demonstrates reflection and insights from experiences
+- [ ] My authentic voice and personality come through
+- [ ] The statement shows rather than tells about my qualities
+- [ ] Transitions between paragraphs create smooth flow
+- [ ] Personal stories and examples directly relate to scholarship qualities
+- [ ] Future goals are clearly articulated
+- [ ] The connection between past experiences and future goals is established
+- [ ] The conclusion is memorable and reinforces key themes
+- [ ] Personal stories and examples are included
+- [ ] No spelling or grammatical errors are present
+- [ ] The statement meets the required word or character count
+- [ ] Clichés and overly general statements have been eliminated
+- [ ] The statement demonstrates why I deserve this specific scholarship
+- [ ] At least two other people have reviewed the statement and provided feedback
+- [ ] I have revised the statement at least three times
+''',
+          ordinalPosition: 5,
+          tags: ['personal statement', 'checklist', 'revision'],
+        ),
+        LearningContent(
+          id: 'personal_statement_quiz',
+          title: 'Personal Statement Knowledge Check',
+          type: ContentType.quiz,
+          content: '''
+Personal Statement Quiz
+''',
+          ordinalPosition: 6,
+          tags: ['personal statement', 'quiz', 'assessment'],
+        ),
+      ],
+      assessmentQuestions: [
+        Question(
+          id: 'ps_question1',
+          text:
+              'Which of the following is generally NOT effective in a personal statement?',
+          type: QuestionType.singleChoice,
+          options: [
+            Option(
+                id: 'q1_a',
+                text: 'Using specific personal examples',
+                value: 'specific_examples'),
+            Option(
+                id: 'q1_b',
+                text: 'Including sensory details in stories',
+                value: 'sensory_details'),
+            Option(
+                id: 'q1_c',
+                text: 'Listing all extracurricular activities',
+                value: 'listing_activities'),
+            Option(
+                id: 'q1_d',
+                text: 'Reflecting on lessons learned',
+                value: 'reflection'),
+          ],
+          required: true,
+          category: 'personal',
+        ),
+        Question(
+          id: 'ps_question2',
+          text: 'What is the primary purpose of a personal statement?',
+          type: QuestionType.singleChoice,
+          options: [
+            Option(
+                id: 'q2_a',
+                text: 'To repeat information already in your resume',
+                value: 'repeat_resume'),
+            Option(
+                id: 'q2_b',
+                text:
+                    'To tell your unique story beyond grades and achievements',
+                value: 'unique_story'),
+            Option(
+                id: 'q2_c',
+                text: 'To explain poor academic performance',
+                value: 'poor_academics'),
+            Option(
+                id: 'q2_d',
+                text: 'To list all scholarships you\'ve won',
+                value: 'list_scholarships'),
+          ],
+          required: true,
+          category: 'personal',
+        ),
+      ],
+    ),
+
+    // Personal Branding Module
+    LearningModule(
+      id: 'module_personal_branding',
+      title: 'Developing Your Personal Brand',
+      description:
+          'Create a consistent personal brand that showcases your strengths and aspirations to scholarship committees.',
+      category: 'personal',
+      difficulty: 3,
+      contents: [
+        LearningContent(
+          id: 'personal_branding_intro',
+          title: 'Understanding Personal Branding for Scholarships',
+          type: ContentType.text,
+          content: '''
+# Understanding Personal Branding for Scholarships
+
+Your personal brand is how you present yourself to scholarship committees across all application materials. It's the consistent impression you create that makes you memorable and distinctive.
+
+## Why Personal Branding Matters for Scholarships
+
+* **Differentiation**: Helps you stand out among equally qualified applicants
+* **Consistency**: Creates a coherent narrative across all application elements
+* **Memorability**: Makes your application stick in evaluators' minds
+* **Authenticity**: Showcases your genuine strengths and values
+* **Personal connection**: Authentic passion for the cause
+
+## What Makes a Strong Personal Brand
+
+* **Clarity**: Clear focus on key strengths and unique qualities
+* **Consistency**: Similar themes across essays, recommendations, and interviews
+* **Authenticity**: Genuine representation of who you are
+* **Relevance**: Alignment with scholarship values and requirements
+* **Distinctiveness**: Unique elements that set you apart
+
+In this module, you'll learn how to develop and communicate a personal brand that effectively positions you for scholarship success.
+''',
+          ordinalPosition: 1,
+          tags: ['personal branding', 'introduction', 'scholarships'],
+        ),
+        LearningContent(
+          id: 'personal_branding_elements',
+          title: 'Core Elements of Your Personal Brand',
+          type: ContentType.text,
+          content: '''
+# Core Elements of Your Personal Brand
+
+A compelling personal brand for scholarship applications consists of several key components that work together to create a memorable impression.
+
+## 1. Your Unique Value Proposition
+
+Your UVP is a clear statement that communicates:
+* **Personal Strengths**: What you excel at
+* **Passions**: What motivates you
+* **Contributions**: How you create value for others
+* **Goals**: Where you're headed
+* **Personal Passions**: Causes you genuinely care about
+
+**Example UVP**: "A first-generation college student with strong analytical skills who combines data expertise with community health advocacy to develop solutions for underserved populations."
+
+## 2. Your Core Values
+
+Identify 3-5 principles that guide your decisions and actions:
+* **Integrity**: Ethical standards and honesty
+* **Service**: Commitment to helping others
+* **Excellence**: Pursuit of high standards
+* **Innovation**: Creative problem-solving
+* **Perseverance**: Determination in facing challenges
+
+## 3. Your Personal Narrative
+
+Develop a consistent story that connects:
+* Your background and formative experiences
+* Challenges you've overcome
+* Key accomplishments and what they reveal about you
+* How these experiences shape your goals
+* Why your goals matter to you and others
+
+## 4. Your Areas of Expertise
+
+Identify your key knowledge areas and skills:
+* Academic strengths
+* Technical abilities
+* Soft skills
+* Unique combinations of skills
+* Personal Growth**: Skills and insights you've developed
+
+## 5. Your Visual Presentation
+
+Consider how you present yourself:
+* Professional appearance in interviews
+* Consistent, professional email address
+* Appropriate social media presence
+* Well-formatted application materials
+* Professional photo when required
+
+## 6. Your Communication Style
+
+Develop a consistent voice in your applications:
+* Vocabulary that reflects your field and interests
+* Level of formality appropriate to your field
+* Balance of confidence and humility
+* Use of field-specific terminology where appropriate
+* Consistent tone across all materials
+
+Take time to identify and develop each of these elements to create a cohesive personal brand that will strengthen your scholarship applications.
+''',
+          ordinalPosition: 2,
+          tags: ['personal branding', 'core elements', 'value proposition'],
+        ),
+        LearningContent(
+          id: 'personal_branding_development',
+          title: 'Developing Your Personal Brand',
+          type: ContentType.text,
+          content: '''
+# Developing Your Personal Brand: A Step-by-Step Process
+
+Follow this process to create a compelling personal brand for your scholarship applications.
+
+## Step 1: Self-Assessment
+
+Begin by taking inventory of your qualities, experiences, and aspirations:
+
+### Personal Inventory
+* **Strengths**: What are you naturally good at?
+* **Values**: What principles guide your decisions?
+* **Passions**: What activities energize you?
+* **Achievements**: What accomplishments are you most proud of?
+* **Challenges**: What significant obstacles have you overcome?
+* **Goals**: What do you want to accomplish in the future?
+
+### External Feedback
+* Ask 3-5 people who know you well to describe your best qualities
+* Review past performance evaluations or recommendation letters
+* Consider compliments you frequently receive
+* Note patterns in how others describe you
+
+## Step 2: Identify Your Brand Elements
+
+Based on your self-assessment, define these key elements:
+
+### Your Differentiators
+What makes you unique compared to other applicants with similar qualifications?
+* Unusual combination of skills or interests
+* Distinctive background or perspective
+* Special achievements or experiences
+
+### Your Core Message
+Develop a brief statement (1-2 sentences) that captures:
+* Who you are
+* What you excel at
+* The impact you create or aspire to create
+
+### Key Themes
+Identify 3-5 consistent themes to emphasize across applications:
+* Leadership style
+* Problem-solving approach
+* Community impact
+* Academic excellence
+* Innovative thinking
+
+## Step 3: Express Your Brand Consistently
+
+Apply your brand elements across all scholarship materials:
+
+### Personal Statements
+* Open and close with language that reinforces your core message
+* Include stories that illustrate your key themes
+* Use vocabulary that reflects your values and field of interest
+
+### Resume/CV
+* Organize to highlight experiences that support your brand themes
+* Use action verbs that align with your personal qualities
+* Emphasize achievements that demonstrate your unique value
+
+### Interviews
+* Prepare stories that illustrate your brand themes
+* Develop clear, concise ways to communicate your unique value
+* Ensure your appearance and demeanor align with your brand
+
+### Recommendation Letters
+* Brief recommenders on your brand themes and unique qualities
+* Suggest specific examples they might include that reinforce your brand
+* Thank recommenders who highlight aspects of your personal brand
+
+## Step 4: Refine Your Brand
+
+Your personal brand should evolve as you grow:
+
+* Regularly reassess how well your brand reflects your current self
+* Gather feedback on how your brand is perceived
+* Make adjustments as you gain new experiences and achievements
+* Ensure your brand remains authentic as it evolves
+
+Remember: The most effective personal brand is both authentic and aspirational—it represents your true self while highlighting your best qualities and future potential.
+''',
+          ordinalPosition: 3,
+          tags: ['personal branding', 'brand development', 'self-assessment'],
+        ),
+        LearningContent(
+          id: 'personal_branding_exercise',
+          title: 'Personal Branding Exercise',
+          type: ContentType.exercise,
+          content: '''
+# Personal Branding Exercise: Creating Your Brand Profile
+
+Complete this exercise to develop the key elements of your personal brand for scholarship applications.
+
+## Part 1: Self-Discovery Questions
+
+Take time to thoughtfully answer each question:
+
+1. What three achievements are you most proud of, and why?
+
+2. What challenges have you overcome that demonstrate your character?
+
+3. What consistent positive feedback do you receive from teachers, mentors, or peers?
+
+4. What activities do you lose track of time doing because you enjoy them so much?
+
+5. What issues or causes do you feel most passionate about?
+
+6. What are your top three skills or strengths?
+
+7. What makes your perspective or approach different from others?
+
+8. What three words would you want scholarship committees to associate with you?
+
+## Part 2: Brand Element Development
+
+Based on your answers above, develop these key brand elements:
+
+### Your Personal Tagline
+Create a brief (5-10 word) phrase that captures your essence and aspirations:
+
+Example: "Building technological solutions for environmental challenges"
+
+### Your Core Story
+Identify one experience that best illustrates your key qualities and values:
+
+Example: "When the pandemic shut down our community garden program, I developed a virtual gardening curriculum and distributed seed kits to 50 families, allowing our food security initiative to continue when it was needed most."
+
+### Your Unique Value Proposition
+Complete this statement: "Unlike other candidates with similar qualifications, I bring..."
+
+Example: "Unlike other candidates with similar qualifications, I bring both technical data analysis skills and three years of direct community health outreach experience, allowing me to develop evidence-based solutions that work in real-world settings."
+
+### Your Visual/Verbal Identifiers
+List words, phrases, or themes you want to consistently incorporate:
+
+Example:
+- Key words: innovation, community impact, sustainable solutions
+- Themes: connecting technology with human needs, data-driven social change
+- Field-specific terms: community-based participatory research, iterative design
+
+## Part 3: Consistency Check
+
+Review your scholarship application materials with these questions:
+
+1. Do my personal statements incorporate my core story or similar stories?
+
+2. Does my resume highlight experiences that reflect my unique value?
+
+3. Have I used consistent language and emphasized the same strengths across all materials?
+
+4. Would someone reading multiple parts of my application get a clear, consistent impression of who I am?
+
+5. Have I removed content that contradicts or dilutes my personal brand?
+
+Keep your completed brand profile accessible as you prepare scholarship applications. Refer to it regularly to ensure consistency across all materials.
+''',
+          ordinalPosition: 4,
+          tags: ['personal branding', 'exercise', 'profile development'],
+        ),
+        LearningContent(
+          id: 'personal_branding_checklist',
+          title: 'Personal Branding Checklist for Scholarship Applications',
+          type: ContentType.checklist,
+          content: '''
+- [ ] I have identified 3-5 core qualities that define my personal brand
+- [ ] I have developed a clear personal tagline or elevator pitch
+- [ ] My personal statements consistently reflect my core brand themes
+- [ ] My resume/CV highlights experiences that reinforce my brand
+- [ ] I have removed or downplayed elements that dilute my brand message
+- [ ] My recommendation letters reinforce consistent themes about me
+- [ ] My social media profiles are consistent with my brand and professional
+- [ ] My email address, profile photos, and other visual elements are professional
+- [ ] I use consistent language and terminology across all application materials
+- [ ] My examples and stories illustrate the same key qualities throughout my application
+- [ ] I have prepared interview responses that reinforce my brand messages
+- [ ] My application demonstrates clear alignment between my brand and the scholarship's values
+- [ ] I have received feedback on how my brand comes across to others
+- [ ] I can clearly articulate what makes me different from other applicants
+- [ ] My brand feels authentic and true to who I really am
+''',
+          ordinalPosition: 5,
+          tags: ['personal branding', 'checklist', 'application review'],
+        ),
+        LearningContent(
+          id: 'personal_branding_quiz',
+          title: 'Personal Branding Knowledge Check',
+          type: ContentType.quiz,
+          content: '''
+Personal Branding Quiz
+''',
+          ordinalPosition: 6,
+          tags: ['personal branding', 'quiz', 'assessment'],
+        ),
+      ],
+      assessmentQuestions: [
+        Question(
+          id: 'pb_question1',
+          text:
+              'Which of the following is NOT typically a component of personal branding?',
+          type: QuestionType.singleChoice,
+          options: [
+            Option(
+                id: 'q1_a',
+                text: 'Consistent presentation of your strengths',
+                value: 'consistent_strengths'),
+            Option(
+                id: 'q1_b',
+                text: 'Exaggerating accomplishments to impress committees',
+                value: 'exaggerating'),
+            Option(
+                id: 'q1_c',
+                text: 'Using similar themes across all application materials',
+                value: 'similar_themes'),
+            Option(
+                id: 'q1_d',
+                text: 'Highlighting what makes you unique',
+                value: 'uniqueness'),
+          ],
+          required: true,
+          category: 'personal',
+        ),
+        Question(
+          id: 'pb_question2',
+          text: 'What is a personal Unique Value Proposition (UVP)?',
+          type: QuestionType.singleChoice,
+          options: [
+            Option(
+                id: 'q2_a',
+                text: 'A complete list of all your achievements',
+                value: 'achievement_list'),
+            Option(
+                id: 'q2_b',
+                text:
+                    'A clear statement of what makes you valuable and distinctive',
+                value: 'distinctive_value'),
+            Option(
+                id: 'q2_c',
+                text: 'A description of your financial need',
+                value: 'financial_need'),
+            Option(
+                id: 'q2_d',
+                text: 'An explanation of why you need the scholarship money',
+                value: 'need_explanation'),
+          ],
+          required: true,
+          category: 'personal',
         ),
       ],
     ),

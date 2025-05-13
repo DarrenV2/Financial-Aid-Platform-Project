@@ -206,7 +206,7 @@ class _CoachingMainScreenState extends State<CoachingMainScreen> {
                     const Divider(),
                     const SizedBox(height: 16),
                     const Text(
-                      'Progress Assessment',
+                      'Progress Tracking',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -214,19 +214,8 @@ class _CoachingMainScreenState extends State<CoachingMainScreen> {
                     ),
                     const SizedBox(height: 8),
                     const Text(
-                      'You\'ve completed all required modules! Take a post-assessment to measure your progress.',
+                      'You\'ve completed all required modules!',
                       style: TextStyle(color: Colors.green),
-                    ),
-                    const SizedBox(height: 12),
-                    ElevatedButton.icon(
-                      onPressed: controller.startPostAssessment,
-                      icon: const Icon(Icons.assessment),
-                      label: const Text('Take Post-Assessment'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                      ),
                     ),
                   ],
                 ),
@@ -323,7 +312,7 @@ class _CoachingMainScreenState extends State<CoachingMainScreen> {
             ),
             _buildTipItem(
               context,
-              'Take a post-assessment after completing your learning plan',
+              'Review your learning plan regularly to stay on track',
               Icons.psychology,
             ),
           ],
