@@ -67,71 +67,157 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          Obx(() {
-            // Return the active tab
-            switch (_dashboardController.activeTab.value) {
-              case 'scholarships':
-                return const ScholarshipsTab();
-              case 'applications':
-                return const ApplicationsTab();
-              case 'profile':
-                return const ProfileTab();
-              case 'coaching':
-                return const CoachingTab();
-              default:
-                return const ScholarshipsTab();
-            }
-          }),
-          // Add the chatbot overlay
-          const GeminiChatbot(),
-        ],
-      ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withAlpha(51),
-              blurRadius: 10,
-              spreadRadius: 2,
+    return DefaultTabController(
+      length: 4,
+      initialIndex: _getNavIndex(_dashboardController.activeTab.value),
+      child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          title: const Text(
+            'Student Dashboard',
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 0.5,
+            ),
+          ),
+          centerTitle: true,
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Color(0xFF1E56FB), // Darker blue
+                  TColors.primary,
+                  Color(0xFF4E7DFF), // Lighter blue
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: TColors.primary.withOpacity(0.3),
+                  blurRadius: 15,
+                  offset: const Offset(0, 5),
+                ),
+              ],
+            ),
+          ),
+          elevation: 8,
+          shadowColor: TColors.primary.withOpacity(0.5),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(20),
+              bottomRight: Radius.circular(20),
+            ),
+          ),
+          actions: [
+            Container(
+              margin: const EdgeInsets.only(right: 10),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: IconButton(
+                icon: const Icon(
+                  Icons.logout,
+                  color: Colors.white,
+                ),
+                onPressed: () => _showLogoutConfirmation(),
+                tooltip: 'Logout',
+              ),
             ),
           ],
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(68),
+            child: Container(
+              margin: const EdgeInsets.fromLTRB(16, 8, 16, 14),
+              height: 54,
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(25),
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.3),
+                  width: 1,
+                ),
+              ),
+              child: TabBar(
+                onTap: (index) => _updateActiveTab(index),
+                indicator: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.white.withOpacity(0.5),
+                      Colors.white.withOpacity(0.3),
+                    ],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
+                  borderRadius: BorderRadius.circular(25),
+                  boxShadow: [
+                    BoxShadow(
+                      color: TColors.primary.withOpacity(0.3),
+                      blurRadius: 8,
+                      spreadRadius: 1,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                splashBorderRadius: BorderRadius.circular(25),
+                dividerColor: Colors.transparent,
+                labelColor: Colors.white,
+                unselectedLabelColor: Colors.white.withOpacity(0.7),
+                labelStyle: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+                unselectedLabelStyle: const TextStyle(
+                  fontWeight: FontWeight.normal,
+                  fontSize: 13,
+                ),
+                padding: EdgeInsets.zero,
+                labelPadding: const EdgeInsets.symmetric(vertical: 2),
+                tabs: const [
+                  Tab(
+                    icon: Icon(Icons.school, size: 22),
+                    text: 'Scholarships',
+                  ),
+                  Tab(
+                    icon: Icon(Icons.description, size: 22),
+                    text: 'Applications',
+                  ),
+                  Tab(
+                    icon: Icon(Icons.psychology, size: 22),
+                    text: 'Coaching',
+                  ),
+                  Tab(
+                    icon: Icon(Icons.person, size: 22),
+                    text: 'Profile',
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
-        child: Obx(() {
-          return BottomNavigationBar(
-            currentIndex: _getNavIndex(_dashboardController.activeTab.value),
-            onTap: (index) => _updateActiveTab(index),
-            type: BottomNavigationBarType.fixed,
-            selectedItemColor: TColors.primary,
-            unselectedItemColor: Colors.grey,
-            backgroundColor: Colors.white,
-            elevation: 8,
-            items: const [
-              BottomNavigationBarItem(
-                icon: Icon(Icons.school),
-                label: 'Scholarships',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.description),
-                label: 'Applications',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.psychology),
-                label: 'Coaching',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.person),
-                label: 'Profile',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.logout),
-                label: 'Logout',
-              ),
-            ],
-          );
-        }),
+        body: Stack(
+          children: [
+            Obx(() {
+              // Return the active tab
+              switch (_dashboardController.activeTab.value) {
+                case 'scholarships':
+                  return const ScholarshipsTab();
+                case 'applications':
+                  return const ApplicationsTab();
+                case 'profile':
+                  return const ProfileTab();
+                case 'coaching':
+                  return const CoachingTab();
+                default:
+                  return const ScholarshipsTab();
+              }
+            }),
+            // Add the chatbot overlay
+            const GeminiChatbot(),
+          ],
+        ),
       ),
     );
   }
@@ -152,12 +238,6 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
   }
 
   void _updateActiveTab(int index) {
-    // If logout button is pressed
-    if (index == 4) {
-      _showLogoutConfirmation();
-      return;
-    }
-
     String tabId;
     String route;
 

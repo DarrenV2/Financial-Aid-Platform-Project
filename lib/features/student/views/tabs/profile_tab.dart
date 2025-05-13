@@ -27,24 +27,22 @@ class _ProfileTabState extends State<ProfileTab> {
         return const Center(child: CircularProgressIndicator());
       }
 
-      return SingleChildScrollView(
-        child: Column(
-          children: [
-            // Modern Header with Profile Picture
-            _buildProfileHeader(controller),
-            const SizedBox(height: 20),
-            // Profile Content
-            Column(
-              children: [
-                _buildPersonalInfoSection(controller),
-                const SizedBox(height: 20),
-                _buildAcademicInfoSection(controller),
-                const SizedBox(height: 20),
-                _buildFinancialScholarshipSection(controller),
-                const SizedBox(height: 40),
-              ],
-            ),
-          ],
+      return Scaffold(
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              // Modern Header with Profile Picture
+              _buildProfileHeader(controller),
+              const SizedBox(height: 20),
+              // Profile Content
+              _buildPersonalInfoSection(controller),
+              const SizedBox(height: 20),
+              _buildAcademicInfoSection(controller),
+              const SizedBox(height: 20),
+              _buildFinancialScholarshipSection(controller),
+              const SizedBox(height: 40),
+            ],
+          ),
         ),
       );
     });
@@ -52,7 +50,8 @@ class _ProfileTabState extends State<ProfileTab> {
 
   Widget _buildProfileHeader(ProfileController controller) {
     return Container(
-      height: 250,
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 30),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
@@ -85,23 +84,6 @@ class _ProfileTabState extends State<ProfileTab> {
               radius: 55,
               backgroundColor: Colors.grey.shade300,
               child: const Icon(Icons.person, size: 60, color: Colors.white),
-            ),
-          ),
-          const SizedBox(height: 15),
-          // Upload Photo Button
-          ElevatedButton.icon(
-            onPressed: () {
-              // Add functionality to upload a profile picture
-            },
-            icon: const Icon(Icons.camera_alt),
-            label: const Text("Change Photo"),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white.withOpacity(0.3),
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             ),
           ),
           const SizedBox(height: 15),

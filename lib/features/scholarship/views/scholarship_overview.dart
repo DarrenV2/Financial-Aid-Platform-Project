@@ -26,9 +26,6 @@ class _ScholarshipOverviewState extends State<ScholarshipOverview> {
   Scholarship? _selectedScholarship;
   bool _showScholarshipDetails = false;
 
-  // Current month for calendar view
-  final DateTime _currentMonth = DateTime.now();
-
   @override
   void initState() {
     super.initState();
@@ -120,9 +117,6 @@ class _ScholarshipOverviewState extends State<ScholarshipOverview> {
             _buildSectionTitle('Recent Scholarships'),
             _buildRecentScholarships(),
             const SizedBox(height: 24),
-            _buildSectionTitle('Scholarship Calendar'),
-            _buildCalendarView(),
-            const SizedBox(height: 24),
             _buildSectionTitle('Scholarship News'),
             _buildNewsFeed(),
           ],
@@ -168,9 +162,6 @@ class _ScholarshipOverviewState extends State<ScholarshipOverview> {
                 ),
               ],
             ),
-            const SizedBox(height: 32),
-            _buildSectionTitle('Scholarship Calendar'),
-            _buildCalendarView(),
           ],
         ),
       ),
@@ -198,9 +189,6 @@ class _ScholarshipOverviewState extends State<ScholarshipOverview> {
                     children: [
                       _buildSectionTitle('Recent Scholarships'),
                       _buildRecentScholarships(showAsGrid: true),
-                      const SizedBox(height: 32),
-                      _buildSectionTitle('Scholarship Calendar'),
-                      _buildCalendarView(isWideLayout: true),
                     ],
                   ),
                 ),
@@ -544,277 +532,6 @@ class _ScholarshipOverviewState extends State<ScholarshipOverview> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildCalendarView({bool isWideLayout = false}) {
-    final daysInMonth = DateUtils.getDaysInMonth(
-      _currentMonth.year,
-      _currentMonth.month,
-    );
-    final firstDayOfMonth =
-        DateTime(_currentMonth.year, _currentMonth.month, 1);
-    final startWeekday =
-        firstDayOfMonth.weekday % 7; // 0 = Sunday, 1 = Monday, etc.
-
-    // Map scholarships to days they're due
-    final Map<int, List<Scholarship>> scholarshipsByDay = {};
-    for (final scholarship in _controller.scholarships) {
-      try {
-        // Parse the deadline (this is simplified, assumes a format)
-        final date = DateFormat('yyyy-MM-dd').parse(scholarship.deadline);
-        if (date.year == _currentMonth.year &&
-            date.month == _currentMonth.month) {
-          scholarshipsByDay[date.day] = [
-            ...scholarshipsByDay[date.day] ?? [],
-            scholarship
-          ];
-        }
-      } catch (e) {
-        // Skip if date format isn't parseable
-      }
-    }
-
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.chevron_left),
-                      onPressed: () {
-                        setState(() {
-                          // Navigation logic for previous month
-                        });
-                      },
-                    ),
-                    Text(
-                      DateFormat('MMMM yyyy').format(_currentMonth),
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.chevron_right),
-                      onPressed: () {
-                        setState(() {
-                          // Navigation logic for next month
-                        });
-                      },
-                    ),
-                  ],
-                ),
-                TextButton.icon(
-                  icon: const Icon(Icons.calendar_month),
-                  label: const Text('Full Calendar'),
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Full calendar feature coming soon')),
-                    );
-                  },
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            // Calendar day headers
-            Row(
-              children: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-                  .map((day) => Expanded(
-                        child: Center(
-                          child: Text(
-                            day,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        ),
-                      ))
-                  .toList(),
-            ),
-            const SizedBox(height: 8),
-            // Calendar grid
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 7,
-                childAspectRatio: 1.0,
-                crossAxisSpacing: 4,
-                mainAxisSpacing: 4,
-              ),
-              itemCount: startWeekday + daysInMonth,
-              itemBuilder: (context, index) {
-                if (index < startWeekday) {
-                  return Container(); // Empty cell before month start
-                }
-
-                final day = index - startWeekday + 1;
-                final hasScholarships = scholarshipsByDay.containsKey(day);
-                final isToday = _currentMonth.year == DateTime.now().year &&
-                    _currentMonth.month == DateTime.now().month &&
-                    day == DateTime.now().day;
-
-                return GestureDetector(
-                  onTap: hasScholarships
-                      ? () {
-                          // Show scholarships due on this day
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: Text(
-                                  'Scholarships due on ${DateFormat('MMM d').format(
-                                DateTime(_currentMonth.year,
-                                    _currentMonth.month, day),
-                              )}'),
-                              content: SizedBox(
-                                width: double.maxFinite,
-                                child: ListView.builder(
-                                  shrinkWrap: true,
-                                  itemCount: scholarshipsByDay[day]!.length,
-                                  itemBuilder: (context, index) {
-                                    final scholarship =
-                                        scholarshipsByDay[day]![index];
-                                    return ListTile(
-                                      title: Text(scholarship.title),
-                                      subtitle: Text(scholarship.amount),
-                                      onTap: () {
-                                        Navigator.pop(context);
-                                        setState(() {
-                                          _selectedScholarship = scholarship;
-                                          _showScholarshipDetails = true;
-                                        });
-                                      },
-                                    );
-                                  },
-                                ),
-                              ),
-                              actions: [
-                                TextButton(
-                                  child: const Text('Close'),
-                                  onPressed: () => Navigator.pop(context),
-                                ),
-                              ],
-                            ),
-                          );
-                        }
-                      : null,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: hasScholarships
-                          ? TColors.primary.withAlpha(25)
-                          : isToday
-                              ? Colors.grey.withAlpha(25)
-                              : null,
-                      borderRadius: BorderRadius.circular(8),
-                      border: isToday
-                          ? Border.all(color: TColors.primary, width: 2)
-                          : null,
-                    ),
-                    child: Stack(
-                      children: [
-                        Center(
-                          child: Text(
-                            day.toString(),
-                            style: TextStyle(
-                              fontWeight: isToday || hasScholarships
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
-                              color: hasScholarships ? TColors.primary : null,
-                            ),
-                          ),
-                        ),
-                        if (hasScholarships)
-                          Positioned(
-                            right: 4,
-                            top: 4,
-                            child: Container(
-                              width: 8,
-                              height: 8,
-                              decoration: BoxDecoration(
-                                color: TColors.primary,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-            const SizedBox(height: 16),
-            // Calendar legend
-            Row(
-              children: [
-                _buildCalendarLegendItem(
-                  color: TColors.primary.withAlpha(25),
-                  text: 'Scholarships Due',
-                  hasDot: true,
-                ),
-                const SizedBox(width: 16),
-                _buildCalendarLegendItem(
-                  color: Colors.grey.withAlpha(25),
-                  text: 'Today',
-                  hasBorder: true,
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCalendarLegendItem({
-    required Color color,
-    required String text,
-    bool hasDot = false,
-    bool hasBorder = false,
-  }) {
-    return Row(
-      children: [
-        Container(
-          width: 16,
-          height: 16,
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(4),
-            border:
-                hasBorder ? Border.all(color: TColors.primary, width: 2) : null,
-          ),
-          child: hasDot
-              ? Center(
-                  child: Container(
-                    width: 6,
-                    height: 6,
-                    decoration: BoxDecoration(
-                      color: TColors.primary,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                )
-              : null,
-        ),
-        const SizedBox(width: 8),
-        Text(
-          text,
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[600],
-          ),
-        ),
-      ],
     );
   }
 

@@ -52,7 +52,7 @@ class ScholarshipCard extends StatelessWidget {
                 ),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(16),
                 child: Row(
                   children: [
                     Expanded(
@@ -61,7 +61,7 @@ class ScholarshipCard extends StatelessWidget {
                         children: [
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 4),
+                                horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
                               color: Colors.white.withAlpha(77),
                               borderRadius: BorderRadius.circular(12),
@@ -71,28 +71,30 @@ class ScholarshipCard extends StatelessWidget {
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 12,
+                                fontSize: 13,
                               ),
                             ),
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 12),
                           Text(
                             scholarship.amount,
                             style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
-                              fontSize: 18,
+                              fontSize: 22,
                             ),
                           ),
                         ],
                       ),
                     ),
                     CircleAvatar(
+                      radius: 22,
                       backgroundColor: Colors.white.withAlpha(77),
                       child: IconButton(
                         icon: Icon(
                           isSaved ? Icons.bookmark : Icons.bookmark_border,
                           color: Colors.white,
+                          size: 24,
                         ),
                         onPressed: onSaveToggle,
                         constraints: const BoxConstraints(),
@@ -107,10 +109,11 @@ class ScholarshipCard extends StatelessWidget {
             // Scholarship content
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Title with update indicator
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -118,10 +121,11 @@ class ScholarshipCard extends StatelessWidget {
                           child: Text(
                             scholarship.title,
                             style: const TextStyle(
-                              fontSize: 16,
+                              fontSize: 18,
                               fontWeight: FontWeight.bold,
+                              height: 1.3,
                             ),
-                            maxLines: 2,
+                            maxLines: 3,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
@@ -129,49 +133,78 @@ class ScholarshipCard extends StatelessWidget {
                           Tooltip(
                             message: 'This scholarship has been updated',
                             child: Container(
-                              margin: const EdgeInsets.only(left: 4),
+                              margin: const EdgeInsets.only(left: 8),
                               padding: const EdgeInsets.all(4),
                               decoration: BoxDecoration(
-                                color: Colors.amber.withAlpha(25),
+                                color: Colors.amber.withAlpha(40),
                                 shape: BoxShape.circle,
                               ),
                               child: Icon(
                                 Icons.update,
-                                size: 16,
+                                size: 18,
                                 color: Colors.amber.shade700,
                               ),
                             ),
                           ),
                       ],
                     ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.calendar_today,
-                          size: 14,
-                          color: Colors.grey[600],
-                        ),
-                        const SizedBox(width: 4),
-                        Expanded(
-                          child: Text(
-                            scholarship.deadline.isEmpty
-                                ? 'Deadline: No Deadline'
-                                : 'Deadline: ${scholarship.deadline}',
-                            style: TextStyle(
-                              color: Colors.grey[600],
-                              fontSize: 13,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
+                    const SizedBox(height: 12),
+
+                    // Description
+                    Text(
+                      scholarship.description ?? 'No description available',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[800],
+                        height: 1.4,
+                      ),
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 16),
+
+                    // Deadline information
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[100],
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.calendar_today,
+                            size: 16,
+                            color: Colors.grey[700],
+                          ),
+                          const SizedBox(width: 8),
+                          Flexible(
+                            child: Text(
+                              scholarship.deadline.isEmpty
+                                  ? 'No Deadline'
+                                  : 'Deadline: ${scholarship.deadline}',
+                              style: TextStyle(
+                                color: Colors.grey[800],
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Tags
                     Wrap(
-                      spacing: 4,
-                      runSpacing: 4,
+                      spacing: 8,
+                      runSpacing: 8,
                       children: [
                         if (scholarship.meritBased)
                           _buildTag('Merit-Based', Colors.blue),
@@ -182,7 +215,10 @@ class ScholarshipCard extends StatelessWidget {
                               'GPA: ${scholarship.requiredGpa}', Colors.purple),
                       ],
                     ),
+
                     const Spacer(),
+
+                    // View Details button
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
@@ -190,13 +226,19 @@ class ScholarshipCard extends StatelessWidget {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: TColors.primary,
                           foregroundColor: Colors.white,
-                          elevation: 0,
+                          elevation: 2,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
                         ),
-                        child: const Text('View Details'),
+                        child: const Text(
+                          'View Details',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -211,17 +253,17 @@ class ScholarshipCard extends StatelessWidget {
 
   Widget _buildTag(String text, Color color) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withAlpha(25),
+        color: color.withAlpha(30),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color, width: 0.5),
+        border: Border.all(color: color.withAlpha(100), width: 1),
       ),
       child: Text(
         text,
         style: TextStyle(
-          color: color,
-          fontSize: 10,
+          color: color.withOpacity(0.8),
+          fontSize: 12,
           fontWeight: FontWeight.bold,
         ),
       ),
