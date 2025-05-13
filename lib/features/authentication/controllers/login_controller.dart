@@ -98,6 +98,38 @@ class LoginController extends GetxController {
     }
   }
 
+  /// Handles Google sign-in process
+  Future<void> googleSignIn() async {
+    try {
+      // Start Loading
+      TFullScreenLoader.openLoadingDialog(
+          'Logging in with Google...', TImages.regLoadAnimation);
+
+      // Check Internet Connectivity
+      final isConnected = await NetworkManager.instance.isConnected();
+      if (!isConnected) {
+        TFullScreenLoader.stopLoading();
+        TLoaders.errorSnackBar(
+            title: 'No Internet Connection',
+            message: 'Please check your internet connection and try again.');
+        return;
+      }
+
+      // Sign in using Google Authentication
+      await AuthenticationRepository.instance.signInWithGoogle();
+
+      // Remove Loader
+      TFullScreenLoader.stopLoading();
+
+      // Redirect based on user role
+      AuthenticationRepository.instance.screenRedirect();
+    } catch (e) {
+      TFullScreenLoader.stopLoading();
+      TLoaders.errorSnackBar(
+          title: 'Google Sign In Failed', message: e.toString());
+    }
+  }
+
   @override
   void onClose() {
     email.dispose();

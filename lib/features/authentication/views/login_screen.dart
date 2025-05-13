@@ -379,51 +379,22 @@ class LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildSocialLoginButtons() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 5),
-            child: ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: TColors.white,
-                foregroundColor: TColors.black,
-                side: const BorderSide(color: TColors.grey),
-                minimumSize: const Size(double.infinity, 50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-              ),
-              icon: const Icon(EvaIcons.google),
-              onPressed: () {
-                // Implement Google sign-in logic
-              },
-              label: const Text("Log In with Google"),
-            ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 5),
+      child: ElevatedButton.icon(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: TColors.white,
+          foregroundColor: TColors.black,
+          side: const BorderSide(color: TColors.grey),
+          minimumSize: const Size(double.infinity, 50),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8.0),
           ),
         ),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 5),
-            child: ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: TColors.black,
-                foregroundColor: TColors.white,
-                minimumSize: const Size(double.infinity, 50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-              ),
-              icon: const Icon(Icons.apple),
-              onPressed: () {
-                // Implement Apple sign-in logic
-              },
-              label: const Text("Log In with Apple"),
-            ),
-          ),
-        ),
-      ],
+        icon: const Icon(EvaIcons.google),
+        onPressed: () => loginController.googleSignIn(),
+        label: const Text("Sign In with Google"),
+      ),
     );
   }
 }

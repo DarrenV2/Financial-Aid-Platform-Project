@@ -44,6 +44,7 @@ dependencies:
 
   # AI Integration
   google_generative_ai: ^0.4.7
+  google_sign_in: ^6.3.0
 
 dev_dependencies:
   flutter_test:

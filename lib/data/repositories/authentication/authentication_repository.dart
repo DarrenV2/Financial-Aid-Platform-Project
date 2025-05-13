@@ -7,6 +7,8 @@ import 'package:financial_aid_project/utils/exceptions/format_exceptions.dart';
 import 'package:flutter/services.dart';
 import 'package:financial_aid_project/routes/routes.dart';
 import 'package:financial_aid_project/data/repositories/admin/admin_repository.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter/foundation.dart';
 
 class AuthenticationRepository extends GetxController {
   static AuthenticationRepository get instance => Get.find();
@@ -60,6 +62,60 @@ class AuthenticationRepository extends GetxController {
     try {
       return await _auth.signInWithEmailAndPassword(
           email: email, password: password);
+    } on FirebaseAuthException catch (e) {
+      throw TFirebaseAuthException(e.code).message;
+    } on FirebaseException catch (e) {
+      throw TFirebaseException(e.code).message;
+    } on FormatException catch (_) {
+      throw const TFormatException();
+    } on PlatformException catch (e) {
+      throw TPlatformException(e.code).message;
+    } catch (e) {
+      throw 'Something went wrong. Please try again';
+    }
+  }
+
+// GOOGLE SIGN IN
+  Future<UserCredential> signInWithGoogle() async {
+    try {
+      // For web
+      if (kIsWeb) {
+        // Create a new provider
+        GoogleAuthProvider googleProvider = GoogleAuthProvider();
+
+        // Add scopes if needed
+        googleProvider
+            .addScope('https://www.googleapis.com/auth/contacts.readonly');
+
+        // Set custom parameters (without client_id, as Firebase handles this automatically)
+        googleProvider.setCustomParameters({'login_hint': 'user@example.com'});
+
+        // Sign in using popup
+        return await _auth.signInWithPopup(googleProvider);
+      }
+      // For mobile
+      else {
+        // Begin interactive sign-in process
+        final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+        // If user cancels the sign-in process
+        if (googleUser == null) {
+          throw 'Sign in cancelled by user';
+        }
+
+        // Obtain auth details from request
+        final GoogleSignInAuthentication googleAuth =
+            await googleUser.authentication;
+
+        // Create new credential for user
+        final OAuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
+
+        // Sign in with credential
+        return await _auth.signInWithCredential(credential);
+      }
     } on FirebaseAuthException catch (e) {
       throw TFirebaseAuthException(e.code).message;
     } on FirebaseException catch (e) {

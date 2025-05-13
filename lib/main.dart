@@ -23,7 +23,7 @@ Future<void> main() async {
   // Initialize GetStorage
   await GetStorage.init();
 
-  // Ensure Flutter binding is initialized
+  // Ensure Flutter binding is initialized first
   WidgetsFlutterBinding.ensureInitialized();
 
   // Configure channel buffers to prevent lifecycle messages being discarded
