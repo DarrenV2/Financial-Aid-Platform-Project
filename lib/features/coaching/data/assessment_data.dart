@@ -385,10 +385,220 @@ class AssessmentData {
     ),
   ];
 
-  Question? findQuestionById(String id) {
-    // Search only in pre-assessment questions
+  // Post-assessment questions
+  final List<Question> postAssessmentQuestions = [
+    // Section 1: Academic Preparedness
+    Question(
+      id: 'post_gpa',
+      text: 'What is your current GPA?',
+      type: QuestionType.singleChoice,
+      options: [
+        Option(id: 'gpa_high', text: '3.0 - 4.0', value: 'gpa_high'),
+        Option(id: 'gpa_medium', text: '2.0 - 2.9', value: 'gpa_medium'),
+        Option(id: 'gpa_low', text: 'Below 2.0', value: 'gpa_low'),
+      ],
+      category: 'academic',
+    ),
+    Question(
+      id: 'post_gpa_goals',
+      text: 'Do you have clear goals to improve or maintain your GPA?',
+      type: QuestionType.singleChoice,
+      options: [
+        Option(
+            id: 'goals_clear',
+            text: 'Yes, with a specific plan',
+            value: 'goals_clear'),
+        Option(
+            id: 'goals_no_plan',
+            text: 'Yes, but no specific plan',
+            value: 'goals_no_plan'),
+        Option(id: 'goals_none', text: 'No clear goals', value: 'goals_none'),
+      ],
+      category: 'academic',
+    ),
+    Question(
+      id: 'post_study_tools',
+      text: 'How often do you use study tools from the coaching program?',
+      type: QuestionType.singleChoice,
+      options: [
+        Option(
+            id: 'tools_weekly', text: 'Weekly or more', value: 'tools_weekly'),
+        Option(
+            id: 'tools_occasionally',
+            text: 'Occasionally',
+            value: 'tools_occasionally'),
+        Option(
+            id: 'tools_never', text: 'Never used them', value: 'tools_never'),
+      ],
+      category: 'academic',
+    ),
+
+    // Section 2: Extracurriculars & Leadership
+    Question(
+      id: 'post_leadership_role',
+      text:
+          'Have you taken on any leadership roles since the initial assessment?',
+      type: QuestionType.singleChoice,
+      options: [
+        Option(
+            id: 'leader_yes',
+            text: 'Yes, I lead a group/activity',
+            value: 'leader_yes'),
+        Option(
+            id: 'leader_member',
+            text: 'Member but not leader',
+            value: 'leader_member'),
+        Option(
+            id: 'leader_none',
+            text: 'Not involved in any groups',
+            value: 'leader_none'),
+      ],
+      category: 'leadership',
+    ),
+    Question(
+      id: 'post_competitions',
+      text: 'Have you participated in any academic competitions or events?',
+      type: QuestionType.singleChoice,
+      options: [
+        Option(id: 'comp_won', text: 'Yes, won or placed', value: 'comp_won'),
+        Option(
+            id: 'comp_no_win',
+            text: 'Yes, but did not place',
+            value: 'comp_no_win'),
+        Option(
+            id: 'comp_none', text: 'Have not participated', value: 'comp_none'),
+      ],
+      category: 'extracurricular',
+    ),
+
+    // Section 3: Volunteering
+    Question(
+      id: 'post_volunteer_hours',
+      text:
+          'How many volunteer hours have you completed in the past three months?',
+      type: QuestionType.singleChoice,
+      options: [
+        Option(id: 'vol_many', text: '20+ hours', value: 'vol_many'),
+        Option(id: 'vol_medium', text: '5-19 hours', value: 'vol_medium'),
+        Option(id: 'vol_few', text: '1-4 hours', value: 'vol_few'),
+        Option(id: 'vol_none', text: 'None', value: 'vol_none'),
+      ],
+      category: 'community_service',
+    ),
+    Question(
+      id: 'post_volunteer_aligned',
+      text:
+          'Are your volunteer activities aligned with your academic field or career interests?',
+      type: QuestionType.singleChoice,
+      options: [
+        Option(
+            id: 'vol_aligned_yes',
+            text: 'Strongly aligned',
+            value: 'vol_aligned_yes'),
+        Option(
+            id: 'vol_aligned_somewhat',
+            text: 'Somewhat aligned',
+            value: 'vol_aligned_somewhat'),
+        Option(
+            id: 'vol_aligned_no',
+            text: 'Not aligned at all',
+            value: 'vol_aligned_no'),
+      ],
+      category: 'community_service',
+    ),
+
+    // Section 4: Application Strategy
+    Question(
+      id: 'post_resume_ready',
+      text: 'How would you describe the current state of your resume?',
+      type: QuestionType.singleChoice,
+      options: [
+        Option(
+            id: 'resume_polished',
+            text: 'Polished and ready to send',
+            value: 'resume_polished'),
+        Option(
+            id: 'resume_draft',
+            text: 'Draft in progress',
+            value: 'resume_draft'),
+        Option(
+            id: 'resume_none', text: 'Have not started', value: 'resume_none'),
+      ],
+      category: 'strategy',
+    ),
+    Question(
+      id: 'post_scholarship_search',
+      text: 'How would you describe your approach to finding scholarships?',
+      type: QuestionType.singleChoice,
+      options: [
+        Option(
+            id: 'search_targeted',
+            text: 'Targeted to specific scholarships',
+            value: 'search_targeted'),
+        Option(
+            id: 'search_broad',
+            text: 'Broad search without focus',
+            value: 'search_broad'),
+        Option(
+            id: 'search_none',
+            text: 'Not actively searching',
+            value: 'search_none'),
+      ],
+      category: 'strategy',
+    ),
+    Question(
+      id: 'post_mock_interviews',
+      text:
+          'Have you completed any mock interviews to prepare for scholarship applications?',
+      type: QuestionType.singleChoice,
+      options: [
+        Option(
+            id: 'interview_yes',
+            text: 'Yes, completed mock interviews',
+            value: 'interview_yes'),
+        Option(
+            id: 'interview_planned',
+            text: 'No, but have plans to do so',
+            value: 'interview_planned'),
+        Option(
+            id: 'interview_no',
+            text: 'No plans for mock interviews',
+            value: 'interview_no'),
+      ],
+      category: 'strategy',
+    ),
+    Question(
+      id: 'post_documents_ready',
+      text: 'Which of the following application documents do you have ready?',
+      type: QuestionType.multipleChoice,
+      options: [
+        Option(
+            id: 'doc_essays',
+            text: 'Essays/Personal Statements',
+            value: 'doc_essays'),
+        Option(
+            id: 'doc_recommendations',
+            text: 'Letters of Recommendation',
+            value: 'doc_recommendations'),
+        Option(
+            id: 'doc_transcript',
+            text: 'Academic Transcript',
+            value: 'doc_transcript'),
+        Option(id: 'doc_resume', text: 'Resume/CV', value: 'doc_resume'),
+        Option(id: 'doc_none', text: 'None of the above', value: 'doc_none'),
+      ],
+      category: 'strategy',
+    ),
+  ];
+
+  Question? findQuestionById(String id, {bool isPostAssessment = false}) {
+    // Search in the appropriate question list based on assessment type
     try {
-      return preAssessmentQuestions.firstWhere((q) => q.id == id);
+      if (isPostAssessment) {
+        return postAssessmentQuestions.firstWhere((q) => q.id == id);
+      } else {
+        return preAssessmentQuestions.firstWhere((q) => q.id == id);
+      }
     } catch (e) {
       return null;
     }

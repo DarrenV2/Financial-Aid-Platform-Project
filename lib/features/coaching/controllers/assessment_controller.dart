@@ -11,9 +11,17 @@ class AssessmentController extends GetxController {
   final RxInt currentQuestionIndex = 0.obs;
   final RxMap<String, dynamic> answers = <String, dynamic>{}.obs;
   final RxList<Question> questions = <Question>[].obs;
+  final RxBool isPostAssessment = false.obs;
 
   void initPreAssessment() {
+    isPostAssessment.value = false;
     questions.value = _assessmentService.getPreAssessmentQuestions();
+    resetAssessment();
+  }
+
+  void initPostAssessment() {
+    isPostAssessment.value = true;
+    questions.value = _assessmentService.getPostAssessmentQuestions();
     resetAssessment();
   }
 
@@ -72,8 +80,12 @@ class AssessmentController extends GetxController {
       ));
     });
 
-    AssessmentResult result =
-        await _assessmentService.evaluatePreAssessment(answerObjects);
+    AssessmentResult result;
+    if (isPostAssessment.value) {
+      result = await _assessmentService.evaluatePostAssessment(answerObjects);
+    } else {
+      result = await _assessmentService.evaluatePreAssessment(answerObjects);
+    }
 
     isLoading.value = false;
     return result;

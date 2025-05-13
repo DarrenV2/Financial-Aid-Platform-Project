@@ -34,4 +34,8 @@ class TRoutes {
   static const learningPlan = '/coaching/learning-plan';
   static const moduleDetail = '/coaching/module';
   static const recommendationDetail = '/coaching/recommendation';
+
+  // Post-assessment routes
+  static const postAssessment = '/coaching/post-assessment';
+  static const postResults = '/coaching/post-results';
 }

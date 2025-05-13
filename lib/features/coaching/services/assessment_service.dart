@@ -10,6 +10,10 @@ class AssessmentService {
     return _assessmentData.preAssessmentQuestions;
   }
 
+  List<Question> getPostAssessmentQuestions() {
+    return _assessmentData.postAssessmentQuestions;
+  }
+
   Future<AssessmentResult> evaluatePreAssessment(List<Answer> answers) async {
     // Calculate scores based on answers
     double overallScore = 0.0;
@@ -66,6 +70,70 @@ class AssessmentService {
         strengthAreas: strengthAreas,
         improvementAreas: improvementAreas,
       ),
+    );
+  }
+
+  Future<AssessmentResult> evaluatePostAssessment(List<Answer> answers) async {
+    // Calculate scores based on answers
+    double overallScore = 0.0;
+    Map<String, double> categoryScores = {};
+    Map<String, List<Answer>> categorizedAnswers = {};
+
+    // Group answers by category
+    for (Answer answer in answers) {
+      String questionId = answer.questionId;
+      Question? question =
+          _assessmentData.findQuestionById(questionId, isPostAssessment: true);
+
+      if (question != null && question.category != null) {
+        if (!categorizedAnswers.containsKey(question.category)) {
+          categorizedAnswers[question.category!] = [];
+        }
+        categorizedAnswers[question.category!]!.add(answer);
+      }
+    }
+
+    // Calculate category scores
+    categorizedAnswers.forEach((category, categoryAnswers) {
+      double categoryScore =
+          _calculatePostCategoryScore(category, categoryAnswers);
+      categoryScores[category] = categoryScore;
+    });
+
+    // Calculate overall score from post-assessment (out of 30 points)
+    int totalPoints = _calculatePostAssessmentPoints(answers);
+    overallScore = totalPoints.toDouble();
+
+    // Determine eligibility for scholarship types
+    bool meritBased = _isMeritEligible(categoryScores);
+    bool needBased = _isNeedEligible(categoryScores);
+
+    // Generate recommendations based on scores
+    List<Recommendation> recommendations =
+        _generatePostRecommendations(categoryScores, totalPoints);
+
+    // Identify strengths and improvement areas
+    Map<String, String> strengthAreas = _identifyStrengthAreas(categoryScores);
+    Map<String, String> improvementAreas =
+        _identifyImprovementAreas(categoryScores);
+
+    // Determine readiness level based on total points
+    String readinessLevel = _determineReadinessLevel(totalPoints);
+
+    return AssessmentResult(
+      timestamp: DateTime.now(),
+      overallScore: overallScore,
+      categoryScores: categoryScores,
+      recommendations: recommendations,
+      eligibility: ScholarshipEligibility(
+        meritBased: meritBased,
+        needBased: needBased,
+        eligibilityScore: overallScore,
+        strengthAreas: strengthAreas,
+        improvementAreas: improvementAreas,
+      ),
+      readinessLevel: readinessLevel,
+      isPostAssessment: true,
     );
   }
 
@@ -962,5 +1030,296 @@ class AssessmentService {
       default:
         return 'This is an area to improve in your profile.';
     }
+  }
+
+  double _calculatePostCategoryScore(String category, List<Answer> answers) {
+    double score = 0.0;
+    int totalQuestions = 0;
+
+    for (Answer answer in answers) {
+      String questionId = answer.questionId;
+      Question? question =
+          _assessmentData.findQuestionById(questionId, isPostAssessment: true);
+
+      if (question != null) {
+        totalQuestions++;
+        String value = answer.value.toString().toLowerCase();
+
+        // Academic scores
+        if (category == 'academic') {
+          if (questionId == 'post_gpa') {
+            if (value == 'gpa_high')
+              score += 3.0;
+            else if (value == 'gpa_medium')
+              score += 2.0;
+            else if (value == 'gpa_low') score += 1.0;
+          } else if (questionId == 'post_gpa_goals') {
+            if (value == 'goals_clear')
+              score += 3.0;
+            else if (value == 'goals_no_plan')
+              score += 2.0;
+            else
+              score += 0.0;
+          } else if (questionId == 'post_study_tools') {
+            if (value == 'tools_weekly')
+              score += 3.0;
+            else if (value == 'tools_occasionally')
+              score += 2.0;
+            else
+              score += 0.0;
+          }
+        }
+
+        // Leadership scores
+        else if (category == 'leadership') {
+          if (questionId == 'post_leadership_role') {
+            if (value == 'leader_yes')
+              score += 3.0;
+            else if (value == 'leader_member')
+              score += 2.0;
+            else
+              score += 0.0;
+          }
+        }
+
+        // Extracurricular scores
+        else if (category == 'extracurricular') {
+          if (questionId == 'post_competitions') {
+            if (value == 'comp_won')
+              score += 3.0;
+            else if (value == 'comp_no_win')
+              score += 2.0;
+            else
+              score += 0.0;
+          }
+        }
+
+        // Community service scores
+        else if (category == 'community_service') {
+          if (questionId == 'post_volunteer_hours') {
+            if (value == 'vol_many')
+              score += 3.0;
+            else if (value == 'vol_medium')
+              score += 2.0;
+            else if (value == 'vol_few') score += 1.0;
+          } else if (questionId == 'post_volunteer_aligned') {
+            if (value == 'vol_aligned_yes')
+              score += 3.0;
+            else if (value == 'vol_aligned_somewhat')
+              score += 2.0;
+            else
+              score += 0.0;
+          }
+        }
+
+        // Strategy scores
+        else if (category == 'strategy') {
+          if (questionId == 'post_resume_ready') {
+            if (value == 'resume_polished')
+              score += 3.0;
+            else if (value == 'resume_draft')
+              score += 2.0;
+            else
+              score += 0.0;
+          } else if (questionId == 'post_scholarship_search') {
+            if (value == 'search_targeted')
+              score += 3.0;
+            else if (value == 'search_broad')
+              score += 2.0;
+            else
+              score += 0.0;
+          } else if (questionId == 'post_mock_interviews') {
+            if (value == 'interview_yes')
+              score += 3.0;
+            else if (value == 'interview_planned')
+              score += 2.0;
+            else
+              score += 0.0;
+          } else if (questionId == 'post_documents_ready') {
+            if (answer.value is List) {
+              List<dynamic> docs = answer.value as List;
+              // Each document is worth points (up to a maximum for this question)
+              score += docs.length.clamp(0, 3).toDouble();
+            }
+          }
+        }
+      }
+    }
+
+    // Normalize score to 0-100
+    return totalQuestions > 0 ? (score / (totalQuestions * 3.0)) * 100 : 0.0;
+  }
+
+  int _calculatePostAssessmentPoints(List<Answer> answers) {
+    int totalPoints = 0;
+
+    for (Answer answer in answers) {
+      String questionId = answer.questionId;
+      String value = answer.value.toString().toLowerCase();
+
+      // Section 1: Academic Preparedness
+      if (questionId == 'post_gpa') {
+        if (value == 'gpa_high')
+          totalPoints += 3;
+        else if (value == 'gpa_medium')
+          totalPoints += 2;
+        else if (value == 'gpa_low') totalPoints += 1;
+      } else if (questionId == 'post_gpa_goals') {
+        if (value == 'goals_clear')
+          totalPoints += 3;
+        else if (value == 'goals_no_plan') totalPoints += 2;
+      } else if (questionId == 'post_study_tools') {
+        if (value == 'tools_weekly')
+          totalPoints += 3;
+        else if (value == 'tools_occasionally') totalPoints += 2;
+      }
+
+      // Section 2: Extracurriculars & Leadership
+      else if (questionId == 'post_leadership_role') {
+        if (value == 'leader_yes')
+          totalPoints += 3;
+        else if (value == 'leader_member') totalPoints += 2;
+      } else if (questionId == 'post_competitions') {
+        if (value == 'comp_won')
+          totalPoints += 3;
+        else if (value == 'comp_no_win') totalPoints += 2;
+      }
+
+      // Section 3: Volunteering
+      else if (questionId == 'post_volunteer_hours') {
+        if (value == 'vol_many')
+          totalPoints += 3;
+        else if (value == 'vol_medium')
+          totalPoints += 2;
+        else if (value == 'vol_few') totalPoints += 1;
+      } else if (questionId == 'post_volunteer_aligned') {
+        if (value == 'vol_aligned_yes')
+          totalPoints += 3;
+        else if (value == 'vol_aligned_somewhat') totalPoints += 2;
+      }
+
+      // Section 4: Application Strategy
+      else if (questionId == 'post_resume_ready') {
+        if (value == 'resume_polished')
+          totalPoints += 3;
+        else if (value == 'resume_draft') totalPoints += 2;
+      } else if (questionId == 'post_scholarship_search') {
+        if (value == 'search_targeted')
+          totalPoints += 3;
+        else if (value == 'search_broad') totalPoints += 2;
+      } else if (questionId == 'post_mock_interviews') {
+        if (value == 'interview_yes')
+          totalPoints += 3;
+        else if (value == 'interview_planned') totalPoints += 2;
+      }
+    }
+
+    return totalPoints;
+  }
+
+  List<Recommendation> _generatePostRecommendations(
+      Map<String, double> categoryScores, int totalPoints) {
+    List<Recommendation> recommendations = [];
+
+    // Based on readiness level
+    if (totalPoints < 15) {
+      recommendations.add(
+        Recommendation(
+          id: 'post_rec_needs_work',
+          title: 'Revisit Core Modules',
+          description:
+              'Your readiness score indicates you need to revisit the coaching lessons and set clearer goals.',
+          priority: RecommendationPriority.high,
+          action: 'Review your learning plan and complete all core modules.',
+        ),
+      );
+    } else if (totalPoints < 25) {
+      recommendations.add(
+        Recommendation(
+          id: 'post_rec_almost_there',
+          title: 'Focus on Weak Areas',
+          description:
+              'You\'re almost ready to apply for scholarships! Focus on your identified improvement areas.',
+          priority: RecommendationPriority.medium,
+          action: 'Review your category scores and strengthen weak areas.',
+        ),
+      );
+    } else {
+      recommendations.add(
+        Recommendation(
+          id: 'post_rec_ready',
+          title: 'Start Applying Now',
+          description:
+              'You\'re a strong candidate for scholarships! Start applying with confidence.',
+          priority: RecommendationPriority.low,
+          action: 'Begin applying for scholarships that match your profile.',
+        ),
+      );
+    }
+
+    // Add category-specific recommendations based on scores
+    categoryScores.forEach((category, score) {
+      if (score < 60.0) {
+        String title = '';
+        String description = '';
+        String action = '';
+        String? moduleId;
+
+        if (category == 'academic') {
+          title = 'Improve Academic Readiness';
+          description =
+              'Your academic readiness score is lower than optimal for scholarship applications.';
+          action = 'Focus on improving your GPA and using more study tools.';
+          moduleId = 'module_academic_profile';
+        } else if (category == 'leadership') {
+          title = 'Enhance Leadership Experience';
+          description =
+              'Your leadership score could be stronger for scholarship applications.';
+          action = 'Seek leadership roles in organizations you participate in.';
+          moduleId = 'module_leadership';
+        } else if (category == 'extracurricular') {
+          title = 'Boost Extracurricular Participation';
+          description =
+              'Your extracurricular profile needs strengthening for competitive scholarships.';
+          action =
+              'Join competitions or activities related to your field of study.';
+          moduleId = 'module_extracurricular';
+        } else if (category == 'community_service') {
+          title = 'Increase Community Service Impact';
+          description =
+              'Your community service hours or alignment could be improved.';
+          action = 'Volunteer for causes aligned with your career goals.';
+          moduleId = 'module_community_service';
+        } else if (category == 'strategy') {
+          title = 'Strengthen Application Strategy';
+          description =
+              'Your application readiness needs improvement before applying.';
+          action = 'Prepare your resume and practice mock interviews.';
+          moduleId = 'module_application_strategy';
+        }
+
+        recommendations.add(
+          Recommendation(
+            id: 'post_rec_${category}_improvement',
+            title: title,
+            description: description,
+            category: category,
+            priority: RecommendationPriority.high,
+            action: action,
+            learningModuleId: moduleId,
+          ),
+        );
+      }
+    });
+
+    return recommendations;
+  }
+
+  String _determineReadinessLevel(int points) {
+    if (points >= 25)
+      return "Ready! You're a strong candidate. Start applying now.";
+    if (points >= 15)
+      return "Almost There. Focus on weak areas (e.g., GPA, leadership).";
+    return "Needs Work. Revisit the coaching lessons and set clear goals.";
   }
 }

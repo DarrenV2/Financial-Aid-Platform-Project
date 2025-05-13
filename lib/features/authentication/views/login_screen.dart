@@ -19,11 +19,27 @@ class LoginScreenState extends State<LoginScreen> {
   // Create local controller instance to avoid disposal issues
   late final LoginController loginController;
 
+  // Create local text editing controllers
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
     // Initialize the controller here
     loginController = Get.find<LoginController>();
+
+    // Initialize local controllers with remembered values from controller
+    _emailController.text = loginController.rememberedEmail ?? '';
+    _passwordController.text = loginController.rememberedPassword ?? '';
+  }
+
+  @override
+  void dispose() {
+    // Dispose local controllers
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 
   @override
@@ -267,7 +283,7 @@ class LoginScreenState extends State<LoginScreen> {
     return Column(
       children: [
         TextFormField(
-          controller: loginController.email,
+          controller: _emailController,
           decoration: const InputDecoration(
             labelText: "Email",
             hintText: "yourmail@gmail.com",
@@ -280,7 +296,7 @@ class LoginScreenState extends State<LoginScreen> {
         const SizedBox(height: 15),
         Obx(
           () => TextFormField(
-            controller: loginController.password,
+            controller: _passwordController,
             obscureText: loginController.hidePassword.value,
             decoration: InputDecoration(
               labelText: "Password",
@@ -314,7 +330,19 @@ class LoginScreenState extends State<LoginScreen> {
                     value: loginController.rememberMe.value,
                     activeColor: TColors.primary,
                     onChanged: (value) {
-                      loginController.rememberMe.value = value ?? false;
+                      if (mounted) {
+                        loginController.rememberMe.value = value ?? false;
+                        if (value == true) {
+                          // Use the controller's method for saving credentials
+                          loginController.saveCredentials(
+                            _emailController.text.trim(),
+                            _passwordController.text.trim(),
+                          );
+                        } else {
+                          // Use the controller's method for clearing credentials
+                          loginController.clearCredentials();
+                        }
+                      }
                     },
                   ),
                 ),
@@ -354,17 +382,21 @@ class LoginScreenState extends State<LoginScreen> {
           if (!mounted) return;
 
           // Safely trim input spaces before validation
-          final emailText = loginController.email.text.trim();
-          final passwordText = loginController.password.text.trim();
+          final emailText = _emailController.text.trim();
+          final passwordText = _passwordController.text.trim();
 
           // Only modify the text controllers if widget is still mounted
           if (mounted) {
-            loginController.email.text = emailText;
-            loginController.password.text = passwordText;
+            _emailController.text = emailText;
+            _passwordController.text = passwordText;
           }
 
           if (_loginFormKey.currentState!.validate()) {
-            await loginController.emailAndPasswordSignIn();
+            // Pass email and password directly to the sign in method
+            await loginController.emailAndPasswordSignIn(
+              emailText,
+              passwordText,
+            );
           }
         },
         child: const Text(
@@ -392,7 +424,12 @@ class LoginScreenState extends State<LoginScreen> {
           ),
         ),
         icon: const Icon(EvaIcons.google),
-        onPressed: () => loginController.googleSignIn(),
+        onPressed: () {
+          // Ensure the controller is still valid
+          if (mounted) {
+            loginController.googleSignIn();
+          }
+        },
         label: const Text("Sign In with Google"),
       ),
     );

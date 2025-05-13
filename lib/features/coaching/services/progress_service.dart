@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../models/user_progress.dart';
 import '../models/assessment_result.dart';
 import '../data/progress_repository.dart';
+import 'package:get/get.dart';
 
 class ProgressService {
   final IProgressRepository _repository;
@@ -16,11 +17,40 @@ class ProgressService {
 
   Future<void> updateModuleProgress(
       String userId, String moduleId, double progress) async {
-    await _repository.updateModuleProgress(userId, moduleId, progress);
+    try {
+      // Log progress update
+      print(
+          'ProgressService: Updating module progress for user $userId - Module $moduleId: $progress%');
+      await _repository.updateModuleProgress(userId, moduleId, progress);
+
+      // If module is completed (100%), mark it as completed
+      if (progress >= 100) {
+        await markModuleCompleted(userId, moduleId);
+      }
+    } catch (e) {
+      print('Error updating module progress: $e');
+      rethrow;
+    }
   }
 
   Future<void> markModuleCompleted(String userId, String moduleId) async {
-    await _repository.markModuleCompleted(userId, moduleId);
+    try {
+      print(
+          'ProgressService: Marking module as completed for user $userId - Module $moduleId');
+      await _repository.markModuleCompleted(userId, moduleId);
+
+      // Get current user progress to verify module completion
+      final userProgress = await getUserProgress(userId);
+      final completedModules = userProgress.completedModules;
+
+      print('ProgressService: User has completed modules: $completedModules');
+
+      // Note: We no longer try to directly update controllers here
+      // The CoachingController now has a timer that periodically checks module completion status
+    } catch (e) {
+      print('Error marking module as completed: $e');
+      rethrow;
+    }
   }
 
   Future<void> saveAssessmentResult(
@@ -137,6 +167,8 @@ class ProgressService {
           categoryScores: latestResult.categoryScores,
           recommendations: updatedRecommendations,
           eligibility: latestResult.eligibility,
+          isPostAssessment: latestResult.isPostAssessment,
+          readinessLevel: latestResult.readinessLevel,
         );
 
         // Save the updated assessment result

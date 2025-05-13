@@ -15,20 +15,31 @@ class LoginController extends GetxController {
 
   final hidePassword = true.obs;
   final rememberMe = false.obs;
-  final localStorage = GetStorage();
-  final email = TextEditingController();
-  final password = TextEditingController();
   final adminRepository = Get.put(AdminRepository());
 
-  @override
-  void onInit() {
-    email.text = localStorage.read('REMEMBER_ME_EMAIL') ?? '';
-    password.text = localStorage.read('REMEMBER_ME_PASSWORD') ?? '';
-    super.onInit();
+  // Private storage instance
+  final _localStorage = GetStorage();
+
+  // Getters for remembered credentials
+  String? get rememberedEmail =>
+      _localStorage.read<String>('REMEMBER_ME_EMAIL');
+  String? get rememberedPassword =>
+      _localStorage.read<String>('REMEMBER_ME_PASSWORD');
+
+  // Method to save credentials
+  void saveCredentials(String email, String password) {
+    _localStorage.write('REMEMBER_ME_EMAIL', email);
+    _localStorage.write('REMEMBER_ME_PASSWORD', password);
+  }
+
+  // Method to clear credentials
+  void clearCredentials() {
+    _localStorage.remove('REMEMBER_ME_EMAIL');
+    _localStorage.remove('REMEMBER_ME_PASSWORD');
   }
 
   /// Handles email and password sign-in process
-  Future<void> emailAndPasswordSignIn() async {
+  Future<void> emailAndPasswordSignIn(String email, String password) async {
     try {
       // Start Loading
       TFullScreenLoader.openLoadingDialog(
@@ -44,9 +55,9 @@ class LoginController extends GetxController {
         return;
       }
 
-      // Validate input
-      final trimmedEmail = email.text.trim();
-      final trimmedPassword = password.text.trim();
+      // Trim inputs
+      final trimmedEmail = email.trim();
+      final trimmedPassword = password.trim();
 
       if (trimmedEmail.isEmpty || trimmedPassword.isEmpty) {
         TFullScreenLoader.stopLoading();
@@ -58,8 +69,9 @@ class LoginController extends GetxController {
 
       // Save Data if Remember Me is selected
       if (rememberMe.value) {
-        localStorage.write('REMEMBER_ME_EMAIL', trimmedEmail);
-        localStorage.write('REMEMBER_ME_PASSWORD', trimmedPassword);
+        saveCredentials(trimmedEmail, trimmedPassword);
+      } else {
+        clearCredentials();
       }
 
       // Sign in using Email & Password Authentication
@@ -132,8 +144,6 @@ class LoginController extends GetxController {
 
   @override
   void onClose() {
-    email.dispose();
-    password.dispose();
     super.onClose();
   }
 }

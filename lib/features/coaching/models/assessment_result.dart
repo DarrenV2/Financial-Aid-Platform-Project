@@ -18,6 +18,8 @@ class AssessmentResult {
   final Map<String, double> categoryScores;
   final List<Recommendation> recommendations;
   final ScholarshipEligibility eligibility;
+  final String? readinessLevel; // Added for post-assessment
+  final bool isPostAssessment; // Flag to identify post-assessment results
 
   AssessmentResult({
     required this.timestamp,
@@ -25,6 +27,8 @@ class AssessmentResult {
     required this.categoryScores,
     required this.recommendations,
     required this.eligibility,
+    this.readinessLevel,
+    this.isPostAssessment = false,
   });
 }
 

@@ -73,7 +73,7 @@ class _AssessmentResultScreenState extends State<AssessmentResultScreen> {
 
               TextButton(
                 onPressed: () {
-                  Get.back();
+                  Get.offAllNamed('/user-dashboard/coaching');
                 },
                 child: const Text('Back to Coaching Dashboard'),
               ),

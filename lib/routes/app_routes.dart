@@ -12,6 +12,8 @@ import 'package:financial_aid_project/features/coaching/views/screens/assessment
 import 'package:financial_aid_project/features/coaching/views/screens/learning_plan_screen.dart';
 import 'package:financial_aid_project/features/coaching/views/screens/module_detail_screen.dart';
 import 'package:financial_aid_project/features/coaching/views/screens/recommendation_detail_screen.dart';
+import 'package:financial_aid_project/features/coaching/views/screens/post_assessment_screen.dart';
+import 'package:financial_aid_project/features/coaching/views/screens/post_assessment_result_screen.dart';
 import 'package:financial_aid_project/routes/routes_middleware.dart';
 import 'package:financial_aid_project/routes/routes.dart';
 import 'package:get/get.dart';
@@ -113,7 +115,13 @@ class TAppRoute {
         page: () {
           final args = Get.arguments as Map<String, dynamic>;
           final result = args['result'];
-          return AssessmentResultScreen(result: result);
+          final isPostAssessment = args['isPostAssessment'] ?? false;
+
+          if (isPostAssessment) {
+            return PostAssessmentResultScreen(result: result);
+          } else {
+            return AssessmentResultScreen(result: result);
+          }
         },
         middlewares: [TRouteMiddleware()]),
 
@@ -141,6 +149,21 @@ class TAppRoute {
           final args = Get.arguments as Map<String, dynamic>;
           final recommendation = args['recommendation'];
           return RecommendationDetailScreen(recommendation: recommendation);
+        },
+        middlewares: [TRouteMiddleware()]),
+
+    // Post-assessment routes
+    GetPage(
+        name: TRoutes.postAssessment,
+        page: () => const PostAssessmentScreen(),
+        middlewares: [TRouteMiddleware()]),
+
+    GetPage(
+        name: TRoutes.postResults,
+        page: () {
+          final args = Get.arguments as Map<String, dynamic>;
+          final result = args['result'];
+          return PostAssessmentResultScreen(result: result);
         },
         middlewares: [TRouteMiddleware()]),
     // Note: ScholarshipDetails requires a scholarship parameter, so it can't be

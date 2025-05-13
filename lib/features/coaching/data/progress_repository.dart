@@ -171,6 +171,11 @@ class FirestoreProgressRepository implements IProgressRepository {
                 );
               }
 
+              // Read post-assessment specific fields
+              bool isPostAssessment =
+                  typedMap['isPostAssessment'] as bool? ?? false;
+              String? readinessLevel = typedMap['readinessLevel'] as String?;
+
               // Create full AssessmentResult
               assessmentResults.add(AssessmentResult(
                 timestamp: timestamp,
@@ -178,6 +183,8 @@ class FirestoreProgressRepository implements IProgressRepository {
                 categoryScores: categoryScores,
                 recommendations: recommendations,
                 eligibility: eligibility,
+                isPostAssessment: isPostAssessment,
+                readinessLevel: readinessLevel,
               ));
             } catch (e) {
               // Silently handle errors
@@ -292,6 +299,9 @@ class FirestoreProgressRepository implements IProgressRepository {
         'overallScore': result.overallScore,
         'timestamp': result.timestamp.millisecondsSinceEpoch,
         'categoryScores': result.categoryScores,
+        // Add isPostAssessment flag and readinessLevel
+        'isPostAssessment': result.isPostAssessment,
+        'readinessLevel': result.readinessLevel,
         // Store full recommendations data
         'recommendations': recommendationsData,
         // Also keep recommendation IDs for backward compatibility
