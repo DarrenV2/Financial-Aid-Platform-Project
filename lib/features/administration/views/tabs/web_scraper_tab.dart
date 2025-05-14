@@ -37,8 +37,6 @@ class _WebScraperTabState extends State<WebScraperTab> {
           _buildScrapingStatisticsCard(),
           const SizedBox(height: 24),
           _buildActionsCard(),
-          const SizedBox(height: 24),
-          _buildScraperActivitySection(),
         ],
       ),
     );
@@ -355,137 +353,68 @@ class _WebScraperTabState extends State<WebScraperTab> {
   }
 
   void _showAddSourceDialog() {
-    final sourceNameController = TextEditingController();
-    final sourceUrlController = TextEditingController();
-
     Get.dialog(
       AlertDialog(
-        title: const Text('Add Scraping Source'),
-        content: Column(
+        title: const Text('Feature Coming Soon'),
+        content: const Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TextField(
-              controller: sourceNameController,
-              decoration: const InputDecoration(
-                labelText: 'Source Name',
-                hintText: 'e.g., University Scholarships',
-              ),
+            Icon(
+              Icons.engineering,
+              size: 60,
+              color: TColors.primary,
             ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: sourceUrlController,
-              decoration: const InputDecoration(
-                labelText: 'Source URL',
-                hintText: 'e.g., https://example.com/scholarships',
-              ),
+            SizedBox(height: 16),
+            Text(
+              'This feature will be implemented in the future.',
+              textAlign: TextAlign.center,
             ),
           ],
         ),
         actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: const Text('Cancel'),
-          ),
           ElevatedButton(
-            onPressed: () {
-              // TODO: Implement adding source
-              Get.back(); // Close dialog
-              TLoaders.successSnackBar(
-                  title: 'Success', message: 'Source added successfully');
-
-              // Clean up controllers
-              sourceNameController.dispose();
-              sourceUrlController.dispose();
-            },
+            onPressed: () => Get.back(),
             style: ElevatedButton.styleFrom(
               backgroundColor: TColors.primary,
               foregroundColor: Colors.white,
             ),
-            child: const Text('Add Source'),
+            child: const Text('OK'),
           ),
         ],
       ),
-      barrierDismissible: false,
     );
   }
 
-  void _triggerManualScrape() async {
-    try {
-      // Show confirmation dialog
-      final confirmed = await Get.dialog<bool>(
-        AlertDialog(
-          title: const Text('Trigger Manual Scrape'),
-          content: const Text(
-              'This will trigger a manual web scraping job. The process may take several minutes to complete. Do you want to continue?'),
-          actions: [
-            TextButton(
-              onPressed: () => Get.back(result: false),
-              child: const Text('Cancel'),
+  void _triggerManualScrape() {
+    Get.dialog(
+      AlertDialog(
+        title: const Text('Feature Coming Soon'),
+        content: const Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.engineering,
+              size: 60,
+              color: TColors.primary,
             ),
-            ElevatedButton(
-              onPressed: () => Get.back(result: true),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: TColors.primary,
-                foregroundColor: Colors.white,
-              ),
-              child: const Text('Continue'),
+            SizedBox(height: 16),
+            Text(
+              'This feature will be implemented in the future.',
+              textAlign: TextAlign.center,
             ),
           ],
         ),
-        barrierDismissible: false,
-      );
-
-      if (confirmed != true) return;
-
-      // Show loading dialog
-      Get.dialog(
-        const Center(
-          child: Card(
-            child: Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 16),
-                  Text('Triggering manual scrape...'),
-                ],
-              ),
+        actions: [
+          ElevatedButton(
+            onPressed: () => Get.back(),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: TColors.primary,
+              foregroundColor: Colors.white,
             ),
+            child: const Text('OK'),
           ),
-        ),
-        barrierDismissible: false,
-      );
-
-      try {
-        // Create a trigger document to notify the scraper
-        await _firestore.collection('scraper_triggers').add({
-          'timestamp': FieldValue.serverTimestamp(),
-          'type': 'manual',
-          'status': 'pending',
-          'triggered_by': 'admin',
-        });
-
-        // Add notification
-        await _firestore.collection('admin_notifications').add({
-          'message': 'Manual scraping job triggered by admin',
-          'timestamp': FieldValue.serverTimestamp(),
-          'type': 'scraper_notification',
-          'read': false,
-        });
-
-        // Close dialog and show success message
-        Get.back(); // Close loading dialog
-        TLoaders.successSnackBar(
-            title: 'Success',
-            message: 'Manual scraping job triggered successfully');
-      } catch (e) {
-        // Close dialog and show error
-        Get.back(); // Close loading dialog
-        TLoaders.errorSnackBar(title: 'Error', message: e.toString());
-      }
-    } catch (e) {
-      TLoaders.errorSnackBar(title: 'Error', message: e.toString());
-    }
+        ],
+      ),
+    );
   }
 }

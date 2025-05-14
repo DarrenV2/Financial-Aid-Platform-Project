@@ -157,9 +157,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
 
           const Divider(height: 40),
 
-          // Extra menu items
-          _buildMenuLink('Settings', Icons.settings_outlined, () {}),
-
           const Spacer(),
 
           // Logout button
@@ -306,44 +303,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
 
           const Spacer(),
 
-          // Search bar (optional)
-          Container(
-            width: 300,
-            height: 40,
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            decoration: BoxDecoration(
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? Colors.grey[800]
-                  : Colors.grey[100],
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.search,
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? Colors.grey[400]
-                        : Colors.grey[400],
-                    size: 20),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Search...',
-                      hintStyle: TextStyle(
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? Colors.grey[400]
-                              : Colors.grey[400],
-                          fontSize: 14),
-                      border: InputBorder.none,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(width: 20),
-
           // Theme toggle button
           Obx(() => IconButton(
                 onPressed: () => themeController.toggleTheme(),
@@ -360,232 +319,48 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                     : 'Switch to Dark Mode',
               )),
 
-          const SizedBox(width: 10),
+          const SizedBox(width: 20),
 
-          // Admin account info with dropdown
+          // Admin info display (non-clickable)
           Obx(() {
-            return PopupMenuButton<String>(
-              offset: const Offset(0, 40),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              onSelected: (value) {
-                switch (value) {
-                  case 'profile':
-                    // This would navigate to profile settings
-                    break;
-                  case 'theme':
-                    themeController.toggleTheme();
-                    break;
-                  case 'logout':
-                    profileController.logout();
-                    break;
-                }
-              },
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    radius: 18,
-                    backgroundColor: TColors.primary,
-                    child: Text(
-                      profileController.adminInitials,
-                      style: const TextStyle(color: Colors.white),
+            return Row(
+              children: [
+                CircleAvatar(
+                  radius: 18,
+                  backgroundColor: TColors.primary,
+                  child: Text(
+                    profileController.adminInitials,
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      profileController.admin.value.username.isNotEmpty
+                          ? profileController.admin.value.username
+                          : 'Admin',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white
+                            : Colors.black,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        profileController.admin.value.username.isNotEmpty
-                            ? profileController.admin.value.username
-                            : 'Admin',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? Colors.white
-                              : Colors.black,
-                        ),
+                    Text(
+                      profileController.admin.value.email.isNotEmpty
+                          ? profileController.admin.value.email
+                          : 'admin@email.com',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.grey[400]
+                            : Colors.grey[600],
                       ),
-                      Text(
-                        profileController.admin.value.email.isNotEmpty
-                            ? profileController.admin.value.email
-                            : 'admin@email.com',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? Colors.grey[400]
-                              : Colors.grey[600],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(width: 5),
-                  Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? Colors.grey[400]
-                        : Colors.grey[600],
-                    size: 16,
-                  ),
-                ],
-              ),
-              itemBuilder: (context) => [
-                // Profile Information
-                PopupMenuItem<String>(
-                  value: 'profile-info',
-                  enabled: false,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          CircleAvatar(
-                            radius: 25,
-                            backgroundColor: TColors.primary,
-                            child: Text(
-                              profileController.adminInitials,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 15),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                profileController
-                                        .admin.value.fullName.isNotEmpty
-                                    ? profileController.admin.value.fullName
-                                    : profileController.admin.value.username,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              Text(
-                                profileController.admin.value.email,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey[600],
-                                ),
-                              ),
-                              Container(
-                                margin: const EdgeInsets.only(top: 5),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 2,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: TColors.primary.withAlpha(25),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: const Text(
-                                  'Administrator',
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    color: TColors.primary,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      const Divider(height: 20),
-                    ],
-                  ),
-                ),
-                // View/Edit Profile
-                PopupMenuItem<String>(
-                  value: 'profile',
-                  child: Row(
-                    children: [
-                      const Icon(Icons.person_outline, size: 20),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text('View Profile'),
-                            Text(
-                              'View or edit your profile details',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                // Theme Switch
-                PopupMenuItem<String>(
-                  value: 'theme',
-                  child: Row(
-                    children: [
-                      Icon(
-                        themeController.isDarkMode
-                            ? Icons.light_mode_outlined
-                            : Icons.dark_mode_outlined,
-                        size: 20,
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              themeController.isDarkMode
-                                  ? 'Light Mode'
-                                  : 'Dark Mode',
-                            ),
-                            Text(
-                              'Switch to ${themeController.isDarkMode ? 'light' : 'dark'} theme',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                // Logout Option
-                PopupMenuItem<String>(
-                  value: 'logout',
-                  child: Row(
-                    children: [
-                      const Icon(Icons.logout, size: 20, color: Colors.red),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Logout',
-                              style: TextStyle(color: Colors.red),
-                            ),
-                            Text(
-                              'Sign out from your account',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ],
             );
