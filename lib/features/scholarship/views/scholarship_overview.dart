@@ -23,6 +23,7 @@ class ScholarshipOverview extends StatefulWidget {
 class _ScholarshipOverviewState extends State<ScholarshipOverview> {
   final ScholarshipController _controller = Get.find<ScholarshipController>();
   bool _showScholarshipList = false;
+  bool _showRecommendations = false;
   Scholarship? _selectedScholarship;
   bool _showScholarshipDetails = false;
 
@@ -94,6 +95,8 @@ class _ScholarshipOverviewState extends State<ScholarshipOverview> {
           ),
         ],
       );
+    } else if (_showRecommendations) {
+      return _buildRecommendationsView();
     }
 
     return ResponsiveBuilder(
@@ -310,16 +313,9 @@ class _ScholarshipOverviewState extends State<ScholarshipOverview> {
           icon: Icons.recommend,
           color: Colors.orange,
           onTap: () {
-            // Navigate to recommendations
-          },
-        ),
-        _buildActionCard(
-          title: 'Upcoming Deadlines',
-          description: 'Scholarships closing soon',
-          icon: Icons.timer,
-          color: Colors.red,
-          onTap: () {
-            // Filter to show only upcoming deadlines
+            setState(() {
+              _showRecommendations = true;
+            });
           },
         ),
       ],
@@ -652,7 +648,7 @@ class _ScholarshipOverviewState extends State<ScholarshipOverview> {
     );
   }
 
-  Widget _buildEmptyState(String message, IconData icon) {
+  Widget _buildEmptyState(String message, IconData icon, [String? subMessage]) {
     return SizedBox(
       height: 200,
       child: Center(
@@ -673,6 +669,20 @@ class _ScholarshipOverviewState extends State<ScholarshipOverview> {
               ),
               textAlign: TextAlign.center,
             ),
+            if (subMessage != null) ...[
+              const SizedBox(height: 8),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: Text(
+                  subMessage,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey[500],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ],
           ],
         ),
       ),
@@ -693,6 +703,276 @@ class _ScholarshipOverviewState extends State<ScholarshipOverview> {
           color: color,
           fontSize: 10,
           fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRecommendationsView() {
+    return Column(
+      children: [
+        // App bar with back button
+        Container(
+          padding: const EdgeInsets.all(16),
+          color: TColors.primary,
+          child: Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.white),
+                onPressed: () {
+                  setState(() {
+                    _showRecommendations = false;
+                  });
+                },
+              ),
+              const Expanded(
+                child: Text(
+                  'Recommended Scholarships',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        // Recommendations content
+        Expanded(
+          child: _controller.hasEnoughProfileData()
+              ? _buildRecommendedScholarships()
+              : _buildProfileIncompleteView(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildProfileIncompleteView() {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Center(
+        child: Card(
+          elevation: 5,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.person_outline,
+                  size: 80,
+                  color: Colors.orange,
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  "Profile Information Needed",
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  "To get personalized scholarship recommendations, you need to complete your profile information first.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.edit),
+                  label: const Text("Complete Your Profile"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: TColors.primary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 12, horizontal: 24),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  onPressed: () {
+                    // Navigate to profile tab
+                    Get.toNamed('/user-dashboard/profile');
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRecommendedScholarships() {
+    // Get matching scholarships using the controller
+    final recommendations = _controller.getRecommendedScholarships();
+
+    if (recommendations.isEmpty) {
+      return _buildEmptyState(
+          "No matching scholarships found",
+          Icons.search_off,
+          "We couldn't find scholarships that match your profile. Check back later or update your profile with more details.");
+    }
+
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            child: Text(
+              "Based on your profile, we found ${recommendations.length} scholarships you may be eligible for:",
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: recommendations.length,
+              itemBuilder: (context, index) {
+                return _buildRecommendationCard(recommendations[index]);
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRecommendationCard(Scholarship scholarship) {
+    // Get match reasons using the controller
+    final matchReasons = _controller.getScholarshipMatchReasons(scholarship);
+
+    return Card(
+      margin: const EdgeInsets.only(bottom: 16),
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            _selectedScholarship = scholarship;
+            _showScholarshipDetails = true;
+          });
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: TColors.primary.withAlpha(25),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.school,
+                      color: TColors.primary,
+                      size: 28,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          scholarship.title,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          "Amount: ${scholarship.amount}",
+                          style: TextStyle(
+                            color: Colors.green[700],
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          "Deadline: ${scholarship.deadline}",
+                          style: TextStyle(
+                            color: Colors.red[700],
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                "Why this matches your profile:",
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: matchReasons.map((reason) {
+                  return Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.orange.shade50,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.orange.shade200),
+                    ),
+                    child: Text(
+                      reason,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.orange.shade800,
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  if (scholarship.meritBased) _buildTag('Merit', Colors.blue),
+                  if (scholarship.needBased)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 4),
+                      child: _buildTag('Need', Colors.green),
+                    ),
+                  const Spacer(),
+                  TextButton.icon(
+                    icon: const Icon(Icons.visibility, size: 16),
+                    label: const Text("View Details"),
+                    onPressed: () {
+                      setState(() {
+                        _selectedScholarship = scholarship;
+                        _showScholarshipDetails = true;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

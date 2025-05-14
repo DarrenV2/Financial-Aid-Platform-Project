@@ -4,8 +4,8 @@ import 'package:financial_aid_project/data/repositories/admin/admin_repository.d
 import 'package:financial_aid_project/data/repositories/authentication/authentication_repository.dart';
 import 'package:financial_aid_project/utils/popups/loaders.dart';
 
-class ProfileController extends GetxController {
-  static ProfileController get instance => Get.find();
+class AdminProfileController extends GetxController {
+  static AdminProfileController get instance => Get.find();
 
   final adminRepository = Get.put(AdminRepository());
   final _authRepo = AuthenticationRepository.instance;

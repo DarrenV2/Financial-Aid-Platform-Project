@@ -10,7 +10,7 @@ import 'tabs/admin_management_tab.dart';
 import 'tabs/web_scraper_tab.dart';
 import 'package:financial_aid_project/routes/routes.dart';
 import '../controllers/theme_controller.dart';
-import '../controllers/profile_controller.dart';
+import '../controllers/admin_profile_controller.dart';
 
 class AdminDashboardScreen extends StatefulWidget {
   const AdminDashboardScreen({super.key});
@@ -29,7 +29,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     _sidebarController = Get.put(SidebarController());
     Get.put(AdminDashboardController());
     Get.put(ThemeController());
-    Get.put(ProfileController());
+    Get.put(AdminProfileController());
   }
 
   @override
@@ -254,7 +254,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
 
   Widget _buildHeader() {
     final themeController = Get.find<ThemeController>();
-    final profileController = Get.find<ProfileController>();
+    final profileController = Get.find<AdminProfileController>();
 
     return Container(
       height: 80,

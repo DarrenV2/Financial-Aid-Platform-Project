@@ -116,11 +116,17 @@ class ProfileController extends GetxController {
       if (userData.academicLevel != null) {
         selectedDegreeLevel.value = userData.academicLevel!;
       }
+      if (userData.faculty != null) {
+        selectedFaculty.value = userData.faculty!;
+      }
       if (userData.institution != null) {
         selectedCollege.value = userData.institution!;
       }
       if (userData.major != null) {
         selectedDegreeProgram.value = userData.major!;
+      }
+      if (userData.yearOfStudy != null) {
+        selectedYearOfStudy.value = userData.yearOfStudy!;
       }
       if (userData.gpa != null) {
         gpa.value = userData.gpa!;
@@ -152,8 +158,10 @@ class ProfileController extends GetxController {
         gender: selectedGender.value,
         dateOfBirth: dobController.text,
         academicLevel: selectedDegreeLevel.value,
+        faculty: selectedFaculty.value,
         institution: selectedCollege.value,
         major: selectedDegreeProgram.value,
+        yearOfStudy: selectedYearOfStudy.value,
         gpa: double.tryParse(gpaController.text) ?? 0.0,
 
         // Keep existing values for other fields
@@ -219,6 +227,12 @@ class ProfileController extends GetxController {
     }
     if (user.value.dateOfBirth != null) {
       dobController.text = user.value.dateOfBirth!;
+    }
+    if (user.value.faculty != null) {
+      selectedFaculty.value = user.value.faculty!;
+    }
+    if (user.value.yearOfStudy != null) {
+      selectedYearOfStudy.value = user.value.yearOfStudy!;
     }
 
     // Clear editing state

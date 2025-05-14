@@ -15,10 +15,12 @@ class UserModel {
 
   // Academic information (optional)
   String? institution;
+  String? faculty;
   String? major;
   double? gpa;
   int? graduationYear;
   String? academicLevel; // Undergraduate, Graduate, etc.
+  String? yearOfStudy;
 
   // Financial information (optional)
   bool? needsFinancialAid;
@@ -53,10 +55,12 @@ class UserModel {
 
     // Optional fields
     this.institution,
+    this.faculty,
     this.major,
     this.gpa,
     this.graduationYear,
     this.academicLevel,
+    this.yearOfStudy,
     this.needsFinancialAid,
     this.financialAidStatus,
     this.dateOfBirth,
@@ -92,10 +96,12 @@ class UserModel {
 
       // Optional fields - only include if they have values
       if (institution != null) 'Institution': institution,
+      if (faculty != null) 'Faculty': faculty,
       if (major != null) 'Major': major,
       if (gpa != null) 'GPA': gpa,
       if (graduationYear != null) 'GraduationYear': graduationYear,
       if (academicLevel != null) 'AcademicLevel': academicLevel,
+      if (yearOfStudy != null) 'YearOfStudy': yearOfStudy,
       if (needsFinancialAid != null) 'NeedsFinancialAid': needsFinancialAid,
       if (financialAidStatus != null) 'FinancialAidStatus': financialAidStatus,
       if (dateOfBirth != null) 'DateOfBirth': dateOfBirth,
@@ -136,10 +142,12 @@ class UserModel {
 
         // Optional fields
         institution: data['Institution'],
+        faculty: data['Faculty'],
         major: data['Major'],
         gpa: data['GPA'],
         graduationYear: data['GraduationYear'],
         academicLevel: data['AcademicLevel'],
+        yearOfStudy: data['YearOfStudy'],
         needsFinancialAid: data['NeedsFinancialAid'],
         financialAidStatus: data['FinancialAidStatus'],
         dateOfBirth: data['DateOfBirth'],

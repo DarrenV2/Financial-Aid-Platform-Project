@@ -26,7 +26,7 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
     super.initState();
     // Initialize controllers
     _dashboardController = Get.put(UserDashboardController());
-    _profileController = Get.put(ProfileController());
+    _profileController = Get.put(ProfileController(), tag: 'student');
   }
 
   @override

@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import '../models/scholarship.dart';
+import '../services/scholarship_recommendation_service.dart';
+import 'package:financial_aid_project/features/student/controllers/profile_controller.dart';
 
 /// Controller for managing scholarships.
 class ScholarshipController extends GetxController {
@@ -9,8 +11,14 @@ class ScholarshipController extends GetxController {
   // Firebase reference
   final _db = FirebaseFirestore.instance;
 
+  // Recommendation service
+  late final ScholarshipRecommendationService _recommendationService;
+
   // Observable scholarship list
   final RxList<Scholarship> scholarships = <Scholarship>[].obs;
+
+  // Recommended scholarships
+  final RxList<Scholarship> recommendedScholarships = <Scholarship>[].obs;
 
   // Loading state
   final RxBool isLoading = false.obs;
@@ -24,6 +32,11 @@ class ScholarshipController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    // Make sure the ProfileController is registered with tag 'student'
+    if (!Get.isRegistered<ProfileController>(tag: 'student')) {
+      Get.put(ProfileController(), tag: 'student');
+    }
+    _recommendationService = ScholarshipRecommendationService();
     fetchScholarships();
   }
 
@@ -45,6 +58,28 @@ class ScholarshipController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  /// Check if user has enough profile data for recommendations
+  bool hasEnoughProfileData() {
+    return _recommendationService.hasEnoughProfileData();
+  }
+
+  /// Get recommended scholarships based on user profile
+  List<Scholarship> getRecommendedScholarships() {
+    if (!hasEnoughProfileData()) {
+      return [];
+    }
+
+    final recommendations =
+        _recommendationService.getRecommendedScholarships(scholarships);
+    recommendedScholarships.value = recommendations;
+    return recommendations;
+  }
+
+  /// Get reasons why a scholarship matches the user's profile
+  List<String> getScholarshipMatchReasons(Scholarship scholarship) {
+    return _recommendationService.getMatchReasons(scholarship);
   }
 
   /// Create a new scholarship

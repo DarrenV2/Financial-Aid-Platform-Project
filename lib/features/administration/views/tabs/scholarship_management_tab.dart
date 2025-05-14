@@ -15,7 +15,7 @@ class ScholarshipManagementTab extends StatefulWidget {
 }
 
 class _ScholarshipManagementTabState extends State<ScholarshipManagementTab> {
-  final controller = Get.put(ScholarshipController());
+  late final ScholarshipController controller;
   bool _showAddScholarshipForm = false;
   Scholarship? _scholarshipToEdit;
 
@@ -62,6 +62,13 @@ class _ScholarshipManagementTabState extends State<ScholarshipManagementTab> {
   @override
   void initState() {
     super.initState();
+    // Initialize the controller with admin tag to avoid profile controller conflicts
+    if (!Get.isRegistered<ScholarshipController>(tag: 'admin')) {
+      controller = Get.put(ScholarshipController(), tag: 'admin');
+    } else {
+      controller = Get.find<ScholarshipController>(tag: 'admin');
+    }
+
     // Set up listeners for success and error messages
     _setupMessageListeners();
   }

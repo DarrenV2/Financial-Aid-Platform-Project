@@ -17,7 +17,7 @@ class _ProfileTabState extends State<ProfileTab> {
   @override
   void initState() {
     super.initState();
-    controller = Get.put(ProfileController());
+    controller = Get.put(ProfileController(), tag: 'student');
   }
 
   @override
