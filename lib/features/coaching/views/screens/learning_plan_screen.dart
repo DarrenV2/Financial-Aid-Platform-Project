@@ -34,7 +34,6 @@ class _LearningPlanScreenState extends State<LearningPlanScreen> {
       await learningController.loadRecommendedModules(widget.result);
       dataLoaded.value = true;
     } catch (e) {
-      print('Error loading data: $e');
       dataLoaded.value = true; // Set to true anyway to show error state
     }
   }

@@ -5,7 +5,7 @@ import '../../models/assessment_result.dart';
 import '../../controllers/learning_controller.dart';
 
 class CoachingMainScreen extends StatefulWidget {
-  const CoachingMainScreen({Key? key}) : super(key: key);
+  const CoachingMainScreen({super.key});
 
   @override
   State<CoachingMainScreen> createState() => _CoachingMainScreenState();
@@ -66,7 +66,6 @@ class _CoachingMainScreenState extends State<CoachingMainScreen>
 
       dataLoaded.value = true;
     } catch (e) {
-      print('Error initializing controllers: $e');
       dataLoaded.value = true;
     }
   }
@@ -263,7 +262,7 @@ class _CoachingMainScreenState extends State<CoachingMainScreen>
                                       .value
                                       ?.overallScore ??
                                   0)
-                              .withOpacity(0.1),
+                              .withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
                             color: _getReadinessColor(controller
@@ -271,12 +270,12 @@ class _CoachingMainScreenState extends State<CoachingMainScreen>
                                         .value
                                         ?.overallScore ??
                                     0)
-                                .withOpacity(0.3),
+                                .withValues(alpha: 0.3),
                             width: 2,
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
+                              color: Colors.black.withValues(alpha: 0.05),
                               blurRadius: 8,
                               offset: const Offset(0, 2),
                             ),
@@ -490,11 +489,12 @@ class _CoachingMainScreenState extends State<CoachingMainScreen>
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
                 color: isCompleted
-                    ? Colors.green.withOpacity(0.5)
-                    : Colors.grey.withOpacity(0.3),
+                    ? Colors.green.withValues(alpha: 0.5)
+                    : Colors.grey.withValues(alpha: 0.3),
               ),
-              color:
-                  isCompleted ? Colors.green.withOpacity(0.05) : Colors.white,
+              color: isCompleted
+                  ? Colors.green.withValues(alpha: 0.05)
+                  : Colors.white,
             ),
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: Row(

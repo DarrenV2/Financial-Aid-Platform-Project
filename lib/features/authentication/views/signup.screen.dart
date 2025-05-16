@@ -75,19 +75,6 @@ class SignupScreenState extends State<SignupScreen> {
               _buildSignupForm(),
               const SizedBox(height: 16),
               _buildSignupButton(),
-              const SizedBox(height: 12),
-              const Row(
-                children: [
-                  Expanded(child: Divider()),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    child: Text("or"),
-                  ),
-                  Expanded(child: Divider()),
-                ],
-              ),
-              const SizedBox(height: 15),
-              _buildSocialLoginButtons(),
               const SizedBox(height: 20),
               TextButton(
                 onPressed: () => Get.toNamed(TRoutes.login),
@@ -138,19 +125,6 @@ class SignupScreenState extends State<SignupScreen> {
                 _buildSignupForm(),
                 const SizedBox(height: 16),
                 _buildSignupButton(),
-                const SizedBox(height: 12),
-                const Row(
-                  children: [
-                    Expanded(child: Divider()),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      child: Text("or"),
-                    ),
-                    Expanded(child: Divider()),
-                  ],
-                ),
-                const SizedBox(height: 15),
-                _buildSocialLoginButtons(),
                 const SizedBox(height: 20),
                 TextButton(
                   onPressed: () => Get.toNamed(TRoutes.login),
@@ -202,19 +176,6 @@ class SignupScreenState extends State<SignupScreen> {
                 _buildSignupForm(),
                 const SizedBox(height: 16),
                 _buildSignupButton(),
-                const SizedBox(height: 12),
-                const Row(
-                  children: [
-                    Expanded(child: Divider()),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      child: Text("or"),
-                    ),
-                    Expanded(child: Divider()),
-                  ],
-                ),
-                const SizedBox(height: 15),
-                _buildSocialLoginButtons(),
                 const SizedBox(height: 20),
                 TextButton(
                   onPressed: () => Get.toNamed(TRoutes.login),
@@ -397,51 +358,6 @@ class SignupScreenState extends State<SignupScreen> {
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
       ),
-    );
-  }
-
-  Widget _buildSocialLoginButtons() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 5),
-            child: ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: TColors.white,
-                foregroundColor: TColors.black,
-                side: const BorderSide(color: TColors.grey),
-                minimumSize: const Size(double.infinity, 50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-              ),
-              icon: const Icon(EvaIcons.google),
-              onPressed: () {},
-              label: const Text("Sign Up with Google"),
-            ),
-          ),
-        ),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 5),
-            child: ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: TColors.black,
-                foregroundColor: TColors.white,
-                minimumSize: const Size(double.infinity, 50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-              ),
-              icon: const Icon(Icons.apple),
-              onPressed: () {},
-              label: const Text("Sign Up with Apple"),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

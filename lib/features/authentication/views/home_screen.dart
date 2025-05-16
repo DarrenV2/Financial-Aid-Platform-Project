@@ -49,7 +49,7 @@ class HomeScreen extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           const Text(
-            "Our goal is to make online education work for everyone",
+            "Find scholarships and grants to fund your educational journey",
             style: TextStyle(fontSize: 14, color: Colors.black54),
           ),
           const SizedBox(height: 30),
@@ -83,7 +83,7 @@ class HomeScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 const Text(
-                  "Our goal is to make online education work for everyone",
+                  "Find scholarships and grants to fund your educational journey",
                   style: TextStyle(fontSize: 16, color: Colors.black54),
                 ),
                 const SizedBox(height: 30),
@@ -129,7 +129,7 @@ class HomeScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 const Text(
-                  "Our goal is to make online education work for everyone",
+                  "Find scholarships and grants to fund your educational journey",
                   style: TextStyle(fontSize: 18, color: Colors.black54),
                 ),
                 const SizedBox(height: 50),

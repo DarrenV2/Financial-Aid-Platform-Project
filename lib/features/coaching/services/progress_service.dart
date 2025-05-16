@@ -18,9 +18,6 @@ class ProgressService {
   Future<void> updateModuleProgress(
       String userId, String moduleId, double progress) async {
     try {
-      // Log progress update
-      print(
-          'ProgressService: Updating module progress for user $userId - Module $moduleId: $progress%');
       await _repository.updateModuleProgress(userId, moduleId, progress);
 
       // If module is completed (100%), mark it as completed
@@ -28,27 +25,21 @@ class ProgressService {
         await markModuleCompleted(userId, moduleId);
       }
     } catch (e) {
-      print('Error updating module progress: $e');
       rethrow;
     }
   }
 
   Future<void> markModuleCompleted(String userId, String moduleId) async {
     try {
-      print(
-          'ProgressService: Marking module as completed for user $userId - Module $moduleId');
       await _repository.markModuleCompleted(userId, moduleId);
 
       // Get current user progress to verify module completion
       final userProgress = await getUserProgress(userId);
       final completedModules = userProgress.completedModules;
 
-      print('ProgressService: User has completed modules: $completedModules');
-
       // Note: We no longer try to directly update controllers here
       // The CoachingController now has a timer that periodically checks module completion status
     } catch (e) {
-      print('Error marking module as completed: $e');
       rethrow;
     }
   }
@@ -173,11 +164,9 @@ class ProgressService {
 
         // Save the updated assessment result
         await saveAssessmentResult(userId, updatedResult);
-
-        print('Updated recommendations with proper module IDs');
       }
     } catch (e) {
-      print('Error updating recommendation module IDs: $e');
+      // Error handling
     }
   }
 }

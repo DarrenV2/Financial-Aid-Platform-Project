@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:financial_aid_project/utils/constants/colors.dart';
-import 'package:financial_aid_project/utils/popups/loaders.dart';
 
 class WebScraperTab extends StatefulWidget {
   const WebScraperTab({super.key});

@@ -8,9 +8,9 @@ class PostAssessmentResultScreen extends StatefulWidget {
   final AssessmentResult result;
 
   const PostAssessmentResultScreen({
-    Key? key,
+    super.key,
     required this.result,
-  }) : super(key: key);
+  });
 
   @override
   State<PostAssessmentResultScreen> createState() =>
@@ -245,7 +245,7 @@ class _PostAssessmentResultScreenState
       width: 40,
       height: 40,
       decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
+        color: color.withValues(alpha: 0.2),
         shape: BoxShape.circle,
         border: Border.all(color: color, width: 2),
       ),
@@ -337,7 +337,7 @@ class _PostAssessmentResultScreenState
 
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.withOpacity(0.3)),
+        border: Border.all(color: Colors.grey.withValues(alpha: 0.3)),
         borderRadius: BorderRadius.circular(8),
       ),
       padding: const EdgeInsets.all(12),
@@ -378,7 +378,7 @@ class _PostAssessmentResultScreenState
                   const SizedBox(height: 8),
                   Container(
                     padding: const EdgeInsets.all(8),
-                    color: Colors.grey.withOpacity(0.1),
+                    color: Colors.grey.withValues(alpha: 0.1),
                     child: Row(
                       children: [
                         const Icon(Icons.lightbulb_outline,

@@ -69,24 +69,9 @@ class LearningController extends GetxController {
         throw Exception('Authentication required to access learning modules');
       }
 
-      // Debug: Print recommendations and their module IDs
-      print('Loading recommendations:');
-      for (var rec in result.recommendations) {
-        print('Recommendation: ${rec.title}');
-        print('  - Category: ${rec.category}');
-        print('  - LearningModuleId: ${rec.learningModuleId}');
-        print('  - RelatedContentIds: ${rec.relatedContentIds}');
-      }
-
       // Fetch data first
       final userProgress = await _progressService.getUserProgress(userId);
       final modules = _learningService.getRecommendedModules(result);
-
-      // Debug: Print found modules
-      print('Found ${modules.length} modules:');
-      for (var module in modules) {
-        print('  - ${module.id}: ${module.title} (${module.category})');
-      }
 
       // Then update UI all at once to avoid partial updates during build
       Future.microtask(() {
@@ -96,7 +81,6 @@ class LearningController extends GetxController {
         isLoading.value = false;
       });
     } catch (e) {
-      print('Error loading recommended modules: $e');
       Future.microtask(() {
         isLoading.value = false;
       });

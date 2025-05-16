@@ -52,18 +52,7 @@ class LearningService {
       }
     }
 
-    // Print diagnostic information
-    print('Total recommended module IDs: ${recommendedModuleIds.length}');
-    print('Found modules: ${recommendedModules.length}');
-    if (missingModuleIds.isNotEmpty) {
-      print('WARNING: Missing modules: ${missingModuleIds.join(", ")}');
-    }
-
-    // Print all available modules for reference
-    print('Available module IDs:');
-    for (var module in _contentData.learningModules) {
-      print('  - ${module.id} (${module.category})');
-    }
+    // No diagnostic logs in production
 
     return recommendedModules;
   }

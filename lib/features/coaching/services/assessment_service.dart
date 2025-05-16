@@ -1048,93 +1048,105 @@ class AssessmentService {
         // Academic scores
         if (category == 'academic') {
           if (questionId == 'post_gpa') {
-            if (value == 'gpa_high')
+            if (value == 'gpa_high') {
               score += 3.0;
-            else if (value == 'gpa_medium')
+            } else if (value == 'gpa_medium') {
               score += 2.0;
-            else if (value == 'gpa_low') score += 1.0;
+            } else if (value == 'gpa_low') {
+              score += 1.0;
+            }
           } else if (questionId == 'post_gpa_goals') {
-            if (value == 'goals_clear')
+            if (value == 'goals_clear') {
               score += 3.0;
-            else if (value == 'goals_no_plan')
+            } else if (value == 'goals_no_plan') {
               score += 2.0;
-            else
+            } else {
               score += 0.0;
+            }
           } else if (questionId == 'post_study_tools') {
-            if (value == 'tools_weekly')
+            if (value == 'tools_weekly') {
               score += 3.0;
-            else if (value == 'tools_occasionally')
+            } else if (value == 'tools_occasionally') {
               score += 2.0;
-            else
+            } else {
               score += 0.0;
+            }
           }
         }
 
         // Leadership scores
         else if (category == 'leadership') {
           if (questionId == 'post_leadership_role') {
-            if (value == 'leader_yes')
+            if (value == 'leader_yes') {
               score += 3.0;
-            else if (value == 'leader_member')
+            } else if (value == 'leader_member') {
               score += 2.0;
-            else
+            } else {
               score += 0.0;
+            }
           }
         }
 
         // Extracurricular scores
         else if (category == 'extracurricular') {
           if (questionId == 'post_competitions') {
-            if (value == 'comp_won')
+            if (value == 'comp_won') {
               score += 3.0;
-            else if (value == 'comp_no_win')
+            } else if (value == 'comp_no_win') {
               score += 2.0;
-            else
+            } else {
               score += 0.0;
+            }
           }
         }
 
         // Community service scores
         else if (category == 'community_service') {
           if (questionId == 'post_volunteer_hours') {
-            if (value == 'vol_many')
+            if (value == 'vol_many') {
               score += 3.0;
-            else if (value == 'vol_medium')
+            } else if (value == 'vol_medium') {
               score += 2.0;
-            else if (value == 'vol_few') score += 1.0;
+            } else if (value == 'vol_few') {
+              score += 1.0;
+            }
           } else if (questionId == 'post_volunteer_aligned') {
-            if (value == 'vol_aligned_yes')
+            if (value == 'vol_aligned_yes') {
               score += 3.0;
-            else if (value == 'vol_aligned_somewhat')
+            } else if (value == 'vol_aligned_somewhat') {
               score += 2.0;
-            else
+            } else {
               score += 0.0;
+            }
           }
         }
 
         // Strategy scores
         else if (category == 'strategy') {
           if (questionId == 'post_resume_ready') {
-            if (value == 'resume_polished')
+            if (value == 'resume_polished') {
               score += 3.0;
-            else if (value == 'resume_draft')
+            } else if (value == 'resume_draft') {
               score += 2.0;
-            else
+            } else {
               score += 0.0;
+            }
           } else if (questionId == 'post_scholarship_search') {
-            if (value == 'search_targeted')
+            if (value == 'search_targeted') {
               score += 3.0;
-            else if (value == 'search_broad')
+            } else if (value == 'search_broad') {
               score += 2.0;
-            else
+            } else {
               score += 0.0;
+            }
           } else if (questionId == 'post_mock_interviews') {
-            if (value == 'interview_yes')
+            if (value == 'interview_yes') {
               score += 3.0;
-            else if (value == 'interview_planned')
+            } else if (value == 'interview_planned') {
               score += 2.0;
-            else
+            } else {
               score += 0.0;
+            }
           } else if (questionId == 'post_documents_ready') {
             if (answer.value is List) {
               List<dynamic> docs = answer.value as List;
@@ -1159,58 +1171,78 @@ class AssessmentService {
 
       // Section 1: Academic Preparedness
       if (questionId == 'post_gpa') {
-        if (value == 'gpa_high')
+        if (value == 'gpa_high') {
           totalPoints += 3;
-        else if (value == 'gpa_medium')
+        } else if (value == 'gpa_medium') {
           totalPoints += 2;
-        else if (value == 'gpa_low') totalPoints += 1;
+        } else if (value == 'gpa_low') {
+          totalPoints += 1;
+        }
       } else if (questionId == 'post_gpa_goals') {
-        if (value == 'goals_clear')
+        if (value == 'goals_clear') {
           totalPoints += 3;
-        else if (value == 'goals_no_plan') totalPoints += 2;
+        } else if (value == 'goals_no_plan') {
+          totalPoints += 2;
+        }
       } else if (questionId == 'post_study_tools') {
-        if (value == 'tools_weekly')
+        if (value == 'tools_weekly') {
           totalPoints += 3;
-        else if (value == 'tools_occasionally') totalPoints += 2;
+        } else if (value == 'tools_occasionally') {
+          totalPoints += 2;
+        }
       }
 
       // Section 2: Extracurriculars & Leadership
       else if (questionId == 'post_leadership_role') {
-        if (value == 'leader_yes')
+        if (value == 'leader_yes') {
           totalPoints += 3;
-        else if (value == 'leader_member') totalPoints += 2;
+        } else if (value == 'leader_member') {
+          totalPoints += 2;
+        }
       } else if (questionId == 'post_competitions') {
-        if (value == 'comp_won')
+        if (value == 'comp_won') {
           totalPoints += 3;
-        else if (value == 'comp_no_win') totalPoints += 2;
+        } else if (value == 'comp_no_win') {
+          totalPoints += 2;
+        }
       }
 
       // Section 3: Volunteering
       else if (questionId == 'post_volunteer_hours') {
-        if (value == 'vol_many')
+        if (value == 'vol_many') {
           totalPoints += 3;
-        else if (value == 'vol_medium')
+        } else if (value == 'vol_medium') {
           totalPoints += 2;
-        else if (value == 'vol_few') totalPoints += 1;
+        } else if (value == 'vol_few') {
+          totalPoints += 1;
+        }
       } else if (questionId == 'post_volunteer_aligned') {
-        if (value == 'vol_aligned_yes')
+        if (value == 'vol_aligned_yes') {
           totalPoints += 3;
-        else if (value == 'vol_aligned_somewhat') totalPoints += 2;
+        } else if (value == 'vol_aligned_somewhat') {
+          totalPoints += 2;
+        }
       }
 
       // Section 4: Application Strategy
       else if (questionId == 'post_resume_ready') {
-        if (value == 'resume_polished')
+        if (value == 'resume_polished') {
           totalPoints += 3;
-        else if (value == 'resume_draft') totalPoints += 2;
+        } else if (value == 'resume_draft') {
+          totalPoints += 2;
+        }
       } else if (questionId == 'post_scholarship_search') {
-        if (value == 'search_targeted')
+        if (value == 'search_targeted') {
           totalPoints += 3;
-        else if (value == 'search_broad') totalPoints += 2;
+        } else if (value == 'search_broad') {
+          totalPoints += 2;
+        }
       } else if (questionId == 'post_mock_interviews') {
-        if (value == 'interview_yes')
+        if (value == 'interview_yes') {
           totalPoints += 3;
-        else if (value == 'interview_planned') totalPoints += 2;
+        } else if (value == 'interview_planned') {
+          totalPoints += 2;
+        }
       }
     }
 
@@ -1316,10 +1348,12 @@ class AssessmentService {
   }
 
   String _determineReadinessLevel(int points) {
-    if (points >= 25)
+    if (points >= 25) {
       return "Ready! You're a strong candidate. Start applying now.";
-    if (points >= 15)
+    }
+    if (points >= 15) {
       return "Almost There. Focus on weak areas (e.g., GPA, leadership).";
+    }
     return "Needs Work. Revisit the coaching lessons and set clear goals.";
   }
 }

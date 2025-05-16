@@ -44,19 +44,18 @@ class CoachingController extends GetxController {
       return;
     }
 
-    print(
-        "CoachingController: initializing for user ${_auth.currentUser?.uid}");
+    // Initialization
     loadUserData();
 
     // Listen for authentication state changes
     _auth.authStateChanges().listen((user) {
       if (user == null) {
         // If user signs out while using the app, redirect to login
-        print("CoachingController: User signed out");
+        // User signed out
         Get.offAllNamed('/login');
       } else {
         // Reload user data when authentication state changes
-        print("CoachingController: User signed in: ${user.uid}");
+        // User signed in
         loadUserData();
       }
     });
@@ -65,7 +64,7 @@ class CoachingController extends GetxController {
     // This ensures the UI is updated even if there's an issue with direct controller communication
     _refreshTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
       if (_auth.currentUser != null && !isLoading.value) {
-        print("CoachingController: Running scheduled refresh check");
+        // Running scheduled refresh check
         _checkPostAssessmentEligibility();
       }
     });
@@ -95,21 +94,20 @@ class CoachingController extends GetxController {
           final newValue = _checkRequiredModulesCompleted(learningController);
 
           if (oldValue != newValue) {
-            print(
-                "CoachingController: Post-assessment eligibility changed from $oldValue to $newValue");
+            // Post-assessment eligibility changed
             canTakePostAssessment.value = newValue;
             update(); // Force UI update
           }
         }
       }
     } catch (e) {
-      print('Error checking post-assessment eligibility: $e');
+      // Error checking post-assessment eligibility
     }
   }
 
   Future<void> loadUserData() async {
     try {
-      print("CoachingController: Loading user data from Firestore");
+      // Loading user data from Firestore
       isLoading.value = true;
 
       // Ensure user is authenticated
@@ -119,11 +117,10 @@ class CoachingController extends GetxController {
       }
 
       final userID = _auth.currentUser!.uid;
-      print("CoachingController: Getting progress for user $userID");
+      // Getting progress for user
 
       final userProgress = await _progressService.getUserProgress(userID);
-      print(
-          "CoachingController: Got user progress, assessment results count: ${userProgress.assessmentResults.length}");
+      // Got user progress
 
       // Find the latest pre-assessment result and post-assessment result
       AssessmentResult? latestPreAssessment;
@@ -147,9 +144,7 @@ class CoachingController extends GetxController {
       if (latestPreAssessment != null) {
         lastAssessmentResult.value = latestPreAssessment;
         hasCompletedAssessment.value = true;
-
-        print(
-            "CoachingController: Found pre-assessment result with score: ${lastAssessmentResult.value?.overallScore}");
+        // Found pre-assessment result with score
 
         // Also load recommended modules based on this assessment
         if (Get.isRegistered<LearningController>()) {
@@ -158,7 +153,7 @@ class CoachingController extends GetxController {
               .loadRecommendedModules(lastAssessmentResult.value!);
         }
       } else {
-        print("CoachingController: No pre-assessment results found for user");
+        // No pre-assessment results found for user
         hasCompletedAssessment.value = false;
         lastAssessmentResult.value = null;
       }
@@ -167,10 +162,9 @@ class CoachingController extends GetxController {
       if (latestPostAssessment != null) {
         lastPostAssessmentResult.value = latestPostAssessment;
         hasCompletedPostAssessment.value = true;
-        print(
-            "CoachingController: Found post-assessment result with score: ${lastPostAssessmentResult.value?.overallScore}");
+        // Found post-assessment result
       } else {
-        print("CoachingController: No post-assessment results found for user");
+        // No post-assessment results found for user
         hasCompletedPostAssessment.value = false;
         lastPostAssessmentResult.value = null;
       }
@@ -183,15 +177,13 @@ class CoachingController extends GetxController {
         // Then check if required modules are completed AFTER progress is refreshed
         canTakePostAssessment.value =
             _checkRequiredModulesCompleted(learningController);
-
-        print(
-            "CoachingController: Post-assessment availability updated: ${canTakePostAssessment.value}");
+        // Post-assessment availability updated
       }
 
       isLoading.value = false;
       update(); // Force update on all widgets using this controller
     } catch (e) {
-      print('Error loading user data: $e');
+      // Error loading user data
       isLoading.value = false;
     }
   }
@@ -230,9 +222,7 @@ class CoachingController extends GetxController {
         'module_essay_writing',
         'module_leadership_development'
       ];
-
-      print(
-          "CoachingController: Using default required modules: $defaultRequired");
+      // Using default required modules
 
       // Verify the module exists before checking completion
       final existingModules = defaultRequired
@@ -240,8 +230,7 @@ class CoachingController extends GetxController {
           .toList();
 
       if (existingModules.isEmpty) {
-        print(
-            "CoachingController: No valid modules found, allowing post-assessment");
+        // No valid modules found, allowing post-assessment
         canTakePostAssessment.value = true;
         return true;
       }
@@ -250,14 +239,12 @@ class CoachingController extends GetxController {
           .every((moduleId) => controller.completedModules.contains(moduleId));
 
       // Update observable
-      print(
-          "CoachingController: Default modules completion status: $allCompleted");
+      // Default modules completion status
       canTakePostAssessment.value = allCompleted;
       return allCompleted;
     }
 
-    // Log the required modules and completion status
-    print("CoachingController: Required modules to unlock post-assessment:");
+    // Required modules to unlock post-assessment:
     int completedCount = 0;
 
     // Filter to only include modules that actually exist
@@ -267,8 +254,7 @@ class CoachingController extends GetxController {
 
     // If no valid modules found (they might have been removed/renamed), allow post-assessment
     if (validModules.isEmpty) {
-      print(
-          "CoachingController: No valid modules found, allowing post-assessment");
+      // No valid modules found, allowing post-assessment
       canTakePostAssessment.value = true;
       return true;
     }
@@ -276,16 +262,15 @@ class CoachingController extends GetxController {
     for (final moduleId in validModules) {
       final isCompleted = controller.completedModules.contains(moduleId);
       if (isCompleted) completedCount++;
-      print("  - $moduleId: ${isCompleted ? 'Completed' : 'Not completed'}");
+      // Module status logged
     }
 
     // Check if all required modules are completed
     final allCompleted = validModules
         .every((moduleId) => controller.completedModules.contains(moduleId));
 
-    print(
-        "CoachingController: Completed $completedCount/${validModules.length} required modules");
-    print("CoachingController: Post-assessment unlock status: $allCompleted");
+    // Completed modules count
+    // Post-assessment unlock status
 
     // Update observable
     canTakePostAssessment.value = allCompleted;
@@ -319,7 +304,7 @@ class CoachingController extends GetxController {
 
       update(); // Force UI update
     } catch (e) {
-      print('Error saving assessment result: $e');
+      // Error saving assessment result
     }
   }
 

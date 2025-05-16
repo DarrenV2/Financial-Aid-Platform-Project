@@ -95,7 +95,7 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: TColors.primary.withOpacity(0.3),
+                  color: TColors.primary.withValues(alpha: 0.3),
                   blurRadius: 15,
                   offset: const Offset(0, 5),
                 ),
@@ -103,7 +103,7 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
             ),
           ),
           elevation: 8,
-          shadowColor: TColors.primary.withOpacity(0.5),
+          shadowColor: TColors.primary.withValues(alpha: 0.5),
           shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
               bottomLeft: Radius.circular(20),
@@ -114,7 +114,7 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
             Container(
               margin: const EdgeInsets.only(right: 10),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(15),
               ),
               child: IconButton(
@@ -133,10 +133,10 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
               margin: const EdgeInsets.fromLTRB(16, 8, 16, 14),
               height: 54,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.15),
+                color: Colors.white.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(25),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.3),
+                  color: Colors.white.withValues(alpha: 0.3),
                   width: 1,
                 ),
               ),
@@ -145,8 +145,8 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
                 indicator: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      Colors.white.withOpacity(0.5),
-                      Colors.white.withOpacity(0.3),
+                      Colors.white.withValues(alpha: 0.5),
+                      Colors.white.withValues(alpha: 0.3),
                     ],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
@@ -154,7 +154,7 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
                   borderRadius: BorderRadius.circular(25),
                   boxShadow: [
                     BoxShadow(
-                      color: TColors.primary.withOpacity(0.3),
+                      color: TColors.primary.withValues(alpha: 0.3),
                       blurRadius: 8,
                       spreadRadius: 1,
                       offset: const Offset(0, 3),
@@ -164,7 +164,7 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
                 splashBorderRadius: BorderRadius.circular(25),
                 dividerColor: Colors.transparent,
                 labelColor: Colors.white,
-                unselectedLabelColor: Colors.white.withOpacity(0.7),
+                unselectedLabelColor: Colors.white.withValues(alpha: 0.7),
                 labelStyle: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 14,

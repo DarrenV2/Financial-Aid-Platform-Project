@@ -1,154 +1,96 @@
-# Financial Aid Project
+# Financial Aid Platform
 
-A Flutter application for managing financial aid and scholarships, with user authentication and admin management.
-
-## Project Overview
-
-This application helps users explore and apply for scholarships and financial aid opportunities. It features a user authentication system, admin dashboard, and responsive UI for web platforms.
+A comprehensive Flutter application designed to help students find, apply for, and manage scholarships while providing personalized coaching for academic and financial success.
 
 ## Features
 
-- User authentication (email/password)
-- Admin dashboard for managing scholarships and applications
-- Responsive UI design for web
-- Firebase integration for backend services
-- Automated web scraping for scholarship data collection
+### User Features
 
-## Planned Features
+- **Scholarship Discovery**: Browse, search, and filter available scholarships
+- **Personalized Dashboard**: Track applications, saved scholarships, and progress
+- **Financial Coaching**: Take assessments and receive personalized learning plans
+- **User Profile**: Manage personal information and application preferences
 
-### Authentication Improvements
+### Administrative Features
 
-- Password recovery and reset functionality
-- Email verification for new accounts
-- Social authentication (Google, Apple Sign-in)
-- Multi-factor authentication
-- User profile management
-- Account settings and preferences
-- Session management and security enhancements
+- **Dashboard Overview**: Monitor platform metrics and user engagement
+- **Scholarship Management**: Add, edit, and manage scholarship listings
 
-### User Experience
+## Tech Stack
 
-- Improved navigation with browser history support
-- Enhanced error messaging and feedback
-- Loading states and animations
-- User activity tracking
+- **Frontend**: Flutter with GetX state management
+- **Backend**: Firebase (Authentication, Cloud Firestore, Storage)
+- **AI Integration**: Google Generative AI for chatbot
+- **Authentication**: Email/password and Google Sign-In
 
-## Project Structure
+## Getting Started
 
-```
-lib/
-├── data/
-│   ├── repositories/      # Data repositories and API integrations
-│   └── users/             # User-related data models and services
-├── features/
-│   ├── authentication/    # Authentication feature modules
-│   │   ├── controllers/   # Authentication logic controllers
-│   │   └── views/         # Authentication UI screens
-│   └── scholarship/       # Scholarship feature modules
-├── routes/                # Application routing
-│   ├── app_routes.dart    # Route definitions
-│   ├── routes.dart        # Route constants
-│   ├── routes_middleware.dart # Route guard middleware
-│   └── route_observer.dart    # Route observation utilities
-├── utils/
-│   ├── constants/         # App-wide constants (colors, sizes, etc.)
-│   ├── exceptions/        # Custom exception handlers
-│   ├── formatters/        # Data formatters and parsers
-│   ├── helpers/           # Helper functions
-│   ├── loaders/           # Loading indicators and utilities
-│   ├── popups/            # Dialog and popup utilities
-│   ├── scripts/           # Utility scripts (admin creation, etc.)
-│   ├── themes/            # App theming
-│   └── validators/        # Form validation logic
-├── firebase_options.dart  # Firebase configuration
-└── main.dart              # Application entry point
+### Prerequisites
 
-python_scraper/           # Python-based web scraper for scholarship data
-├── config.py             # Configuration for the scraper
-├── firebase_client.py    # Firebase integration for storing data
-├── scraper.py            # Main scraper implementation
-├── scheduler.py          # Scheduler for running the scraper periodically
-├── setup.py              # Setup helper script
-├── requirements.txt      # Python dependencies
-├── .env.example          # Example environment configuration
-├── Dockerfile            # Docker configuration for containerized deployment
-└── docker-compose.yml    # Docker Compose configuration
-```
-
-## Technologies Used
-
-- Flutter 3.x
-- Firebase (Authentication, Firestore, Storage)
-- GetX for state management
-- Material Design components
-- Python for web scraping (Playwright, BeautifulSoup)
+- Flutter SDK (^3.6.2)
+- Dart SDK
+- Firebase account
+- Google Cloud Platform account (for Generative AI features)
 
 ### Installation
 
-1. Clone this repository
+1. Clone the repository
 
    ```
-   git clone https://github.com/DarrenV2/Financial-Aid-Platform-Project.git
+   git clone https://github.com/DarrenV2/financial_aid_project.git
    ```
 
-2. Install dependencies
+2. Navigate to the project directory
+
+   ```
+   cd financial_aid_project
+   ```
+
+3. Install dependencies
 
    ```
    flutter pub get
    ```
 
-3. Run the application
+4. Run the app
    ```
    flutter run
    ```
 
-## Default Admin Account
+### Firebase Setup
 
-A default admin account is automatically created during the first run with the following credentials:
+1. Create a Firebase project in the [Firebase Console](https://console.firebase.google.com/)
+2. Add your app to the Firebase project
+3. Download the `google-services.json` (Android) or `GoogleService-Info.plist` (iOS) file
+4. Place the configuration files in the appropriate directories
 
-- Email: admin@financialaid.com
-- Password: Providence#7
+## Project Structure
 
-## Web Scraper
+- `lib/features/` - Contains different modules of the application
+  - `authentication/` - User authentication flows
+  - `scholarship/` - Scholarship listing and management
+  - `student/` - Student dashboard and profile management
+  - `coaching/` - Assessment and personalized coaching features
+  - `administration/` - Admin dashboard and management tools
+- `lib/data/` - Data models and repositories
+- `lib/utils/` - Utility functions and helpers
+- `lib/routes/` - Navigation routes
+- `lib/shared_components/` - Reusable UI components
 
-The project includes a Python-based web scraper for collecting scholarship data:
+## Contributing
 
-### Features
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-- Automated collection of scholarship information from multiple websites
-- Integration with Firebase Firestore
-- Intelligent categorization of scholarships
-- Scheduled scraping with configurable intervals
-- Manual trigger via admin dashboard
+## License
 
-### Setup
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-See the instructions in `python_scraper/README.md` for detailed setup and usage information.
+## Acknowledgments
 
-### Running the Scraper
-
-```bash
-cd python_scraper
-python setup.py       # First-time setup
-python scheduler.py   # Start the scheduler
-```
-
-For Docker deployment:
-
-```bash
-cd python_scraper
-docker-compose up -d
-```
-
-## Browser Navigation
-
-The application uses GetX for navigation and properly configures web URL strategy for clean URLs without hash fragments. However, be aware that the authentication flow (login/logout) intentionally clears navigation history for security purposes, which affects browser back button functionality after these operations.
-
-## File Organization and Architecture
-
-**Note**: The project's file organization is in active development and is inconsistent. Several improvements are planned:
-
-- Optimize folder structure for consistency and maintainability
-- Resolve architectural inconsistencies in the data layer
-- Set up testing infrastructure
-- Maybe move to a fully feature Based architecture
+- Flutter and Dart team for the amazing framework
+- Firebase for backend services
+- Contributors and testers who helped improve this platform

@@ -7,9 +7,9 @@ class AssessmentResultScreen extends StatefulWidget {
   final AssessmentResult result;
 
   const AssessmentResultScreen({
-    Key? key,
+    super.key,
     required this.result,
-  }) : super(key: key);
+  });
 
   @override
   State<AssessmentResultScreen> createState() => _AssessmentResultScreenState();
@@ -311,7 +311,7 @@ class _AssessmentResultScreenState extends State<AssessmentResultScreen> {
                     children: [
                       Icon(
                         Icons.arrow_circle_up,
-                        color: Colors.orange[700],
+                        color: const Color.fromARGB(255, 221, 138, 4),
                         size: 18,
                       ),
                       const SizedBox(width: 8),
@@ -413,6 +413,7 @@ class _AssessmentResultScreenState extends State<AssessmentResultScreen> {
 
   Widget _buildRecommendationItem(
       BuildContext context, Recommendation recommendation) {
+    final Color priorityColor = _getPriorityColor(recommendation.priority);
     return InkWell(
       onTap: () {
         Get.toNamed(
@@ -421,9 +422,8 @@ class _AssessmentResultScreenState extends State<AssessmentResultScreen> {
         );
       },
       borderRadius: BorderRadius.circular(12),
-      splashColor: _getPriorityColor(recommendation.priority).withOpacity(0.1),
-      highlightColor:
-          _getPriorityColor(recommendation.priority).withOpacity(0.05),
+      splashColor: priorityColor.withAlpha(26),
+      highlightColor: priorityColor.withAlpha(13),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.grey[100],
@@ -431,7 +431,7 @@ class _AssessmentResultScreenState extends State<AssessmentResultScreen> {
           border: Border.all(color: Colors.grey[300]!),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
+              color: Colors.grey.withAlpha(51),
               spreadRadius: 1,
               blurRadius: 3,
               offset: const Offset(0, 1),
@@ -448,14 +448,13 @@ class _AssessmentResultScreenState extends State<AssessmentResultScreen> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: _getPriorityColor(recommendation.priority)
-                        .withOpacity(0.2),
+                    color: priorityColor.withAlpha(51),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     _getPriorityLabel(recommendation.priority),
                     style: TextStyle(
-                      color: _getPriorityColor(recommendation.priority),
+                      color: priorityColor,
                       fontWeight: FontWeight.w500,
                       fontSize: 12,
                     ),
@@ -485,8 +484,7 @@ class _AssessmentResultScreenState extends State<AssessmentResultScreen> {
                 ),
                 Container(
                   decoration: BoxDecoration(
-                    color: _getPriorityColor(recommendation.priority)
-                        .withOpacity(0.1),
+                    color: priorityColor.withAlpha(26),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   padding: const EdgeInsets.all(8),
@@ -496,7 +494,7 @@ class _AssessmentResultScreenState extends State<AssessmentResultScreen> {
                       Text(
                         'View Details',
                         style: TextStyle(
-                          color: _getPriorityColor(recommendation.priority),
+                          color: priorityColor,
                           fontWeight: FontWeight.w500,
                           fontSize: 12,
                         ),
@@ -505,7 +503,7 @@ class _AssessmentResultScreenState extends State<AssessmentResultScreen> {
                       Icon(
                         Icons.arrow_forward,
                         size: 16,
-                        color: _getPriorityColor(recommendation.priority),
+                        color: priorityColor,
                       ),
                     ],
                   ),
@@ -560,8 +558,6 @@ class _AssessmentResultScreenState extends State<AssessmentResultScreen> {
         return Colors.orange;
       case RecommendationPriority.low:
         return Colors.blue;
-      default:
-        return Colors.blue;
     }
   }
 
@@ -572,8 +568,6 @@ class _AssessmentResultScreenState extends State<AssessmentResultScreen> {
       case RecommendationPriority.medium:
         return 'Medium Priority';
       case RecommendationPriority.low:
-        return 'Recommended';
-      default:
         return 'Recommended';
     }
   }
